@@ -1,0 +1,29 @@
+@charset "UTF-8";
+.products .product{
+	text-align:center;
+	margin-bottom:10px; 
+}
+.product .name{
+	width:100%;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	cursor: pointer;
+	text-align: center;
+	margin-top:5px;
+	padding: 5px 10px;
+	border-bottom: 1px dotted;
+	font-size: 16px;
+}
+.product .productImg{
+	max-height: 240px;
+}
+.product .price{
+	color: #f00;
+	font-size: 20px;
+}
+.product .discounPrice{
+	text-decoration: line-through;
+	color: #666;
+	font-size: 16px;
+}

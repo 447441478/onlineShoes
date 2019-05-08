@@ -1,0 +1,272 @@
+<%@page import="net.hncu.onlineShoes.domain.OrderDetail"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="net.hncu.onlineShoes.util.Msg"%>
+<%@page import="net.hncu.onlineShoes.comm.*"%>
+<%@page import="net.hncu.onlineShoes.util.*"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>管理产品</title>
+<jsp:include page="/inc/admCommon_js_css_inc.jsp"/>
+<!-- 引入Bootstrap -->
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<style type="text/css">
+table tr th,td {
+	text-align: center;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+#shoesTable tbody tr:hover{
+	background-color: rgb(255,255,204);
+}
+#shoesTable tbody tr td{
+	line-height: inherit;
+}
+.glyphicon-ok{
+	color:green;
+}
+.glyphicon-remove{
+	color:red;
+}
+.options{margin: 10px 0;}
+.options button{
+	margin-left: 10px;
+}
+label {
+	font-weight: normal;
+}
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+	border-top:none; 
+}
+.setting span:hover{
+	color:#5874d8;
+}
+</style>
+</head>
+<%
+	Calendar c = Calendar.getInstance();
+	c.add(Calendar.DAY_OF_MONTH, -1);
+	c.set(Calendar.HOUR_OF_DAY, 0);
+	c.set(Calendar.MINUTE, 0);
+	c.set(Calendar.SECOND, 0);
+	String startTime = DateUtil.dateTimeConversionString(c.getTime());
+	c.add(Calendar.DAY_OF_MONTH, 2);
+	String endTime = DateUtil.timeConversionString(c.getTime().getTime()-1000);
+%>
+<script type="text/javascript">
+$.fn.datebox.defaults.parser = function(s){
+	var t = Date.parse(s);
+	if (!isNaN(t)){
+		return new Date(t);
+	} else {
+		return new Date();
+	}
+}
+</script>
+<body style="overflow-x:hidden;overflow-y:auto;">
+	<div class="top_bar">
+		<div class="top_bar_title">管理订单</div>
+	</div>
+	<div class="container-fluid">
+		<div id='orderDetails'  class="row" >
+			<div v-show='tip!=""' style="position: fixed;z-index:100;top:5px;" class="alert alert-warning col-md-offset-5" >
+			    <a href="#" class="close" @click.stop="tip=''">&times;</a>
+			    <span>{{tip}}</span>
+			</div>
+			<br/>
+			<div class="searchs col-md-12">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="keyWord" >产品名称：</label>
+						<input type="text" class="form-control" id="keyWord" placeholder="产品名称"  />
+					</div>
+					<div class="form-group">
+						<label>支付方式：</label>
+						<select class="form-control">
+							<option>全部</option>	
+							<option>货到付款</option>	
+							<option>在线支付</option>	
+						</select>
+					</div>
+					<div class="form-group">
+						<span>时间：</span>
+						<input class="easyui-datebox" id="startTime" name="startTime" value='<%=startTime%>' style="width:110px">
+						<i class="glyphicon glyphicon-resize-horizontal"></i>
+						<input class="easyui-datebox" id="endTime" name="endTime" value='<%=endTime%>' style="width:110px">
+					</div>
+					<br/><br/>
+				</form>
+			</div>
+		<div class="col-md-12" style="background-color: #e9eaee;padding: 20px;">
+			<div class="col-md-12 table-responsive" style="background-color: #f8f9fb; border-radius: 5px;">
+				<table class="table table-striped" style="margin-bottom: 0;font-size: 13px;font-family: 微软雅黑;table-layout: fixed;">
+					<thead>
+						<tr>
+							<th width="40px;"><input style="cursor: pointer;" class="cbxAll" type="checkbox" @click.stop="checkChangeAll()"/></th>
+							<th style="width: 200px;" @click="changeOrder('<%=SearchField.ShoesDef.NAME %>')">
+								产品名称
+							</th>
+							<th style="width: 120px;" @click="changeOrder('<%=SearchField.ShoesDef.BRAND_NAME %>')">
+								单价/数量
+							</th>
+							<th style="width: 180px;" @click="changeOrder('<%=SearchField.ShoesDef.ONLINE_TIME %>')">
+								买家
+							</th>
+							<th style="width: 120px;" @click="changeOrder('<%=SearchField.ShoesDef.SALE_PRICE %>')">
+								实付金额
+							</th>
+							<th style="width: 120px;" @click="changeOrder('<%=SearchField.ShoesDef.STOCK %>')">
+								订单状态
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<template v-for="(item,index) in orderDetails">
+							<tr style="background-color: #fff;height: 13px;border-top:1px solid rgb(221,221,221);">
+								<td colspan="6"></td>
+							</tr>
+							<tr>
+								<td><input type="checkbox"></td>
+								<td colspan="3" style="text-align: left;">
+									{{new Date(item.createTime).toLocaleString()}}
+									&emsp;
+									订单编号：{{item.orderDetailId}}
+									&emsp;
+									快递单号：{{getLogistics(item)}}
+								</td>
+								<td colspan="2" class="setting">
+									<span class="glyphicon glyphicon-edit" style="cursor: pointer;margin-right: 16px;">&ensp;修改</span>
+									<span class="glyphicon glyphicon-cog" style="cursor: pointer;">&ensp;编辑状态</span>
+								</td>
+							</tr>
+							<tr style="background-color: #fff;">
+								<td></td>
+								<td style="white-space:normal;text-align: left;">{{item.shoes.name}}</td>
+								<td style="vertical-align: middle;border-left: 1px solid rgb(221,221,221);">￥{{Number(item.price).toFixed(2)}} x {{item.amount}}</td>
+								<td style="border-left: 1px solid rgb(221,221,221);">
+									<div>
+										<span class="glyphicon glyphicon-user">{{item.name}}</span>
+									</div>
+									<div>
+										<span class="glyphicon glyphicon-phone">{{item.tel}}</span>
+									</div>
+									<div :title="item.addr" style="cursor: pointer;">
+										<span class="glyphicon glyphicon-map-marker">{{item.addr}}</span>
+									</div>
+								</td>
+								<td style="vertical-align: middle;border-left: 1px solid rgb(221,221,221);">￥{{Number(item.price*item.amount).toFixed(2)}}</td>
+								<td style="vertical-align: middle;border-left: 1px solid rgb(221,221,221);">
+									{{getOrderFlag(item)}}<br/>
+									<button @click.stop='sendGoods(item)' v-if="item.flag == <%=OrderDetail.Flag.INIT%>" type="button" class="btn btn-info btn-sm" style="margin-top: 6px;">发货</button>
+									<button @click.stop='completeTransaction(item)' v-if="item.flag == <%=OrderDetail.Flag.ACCEPTED%>" type="button" class="btn btn-info btn-sm" style="margin-top: 6px;">交易完成</button>
+								</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+				<!-- <div v-if='pageInfo.total == 0'>很抱歉，没有找到符合的数据。</div> -->
+				<!-- <products-pagination :page-info="pageInfo"></products-pagination> -->
+			</div>
+		</div>	
+<!-- 模式对话框 -->
+<div class="modal fade" id="myModal" style="overflow:hidden;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="dialog" style="width: 450px;height: 350px;">
+		<div class="modal-content">
+			<span style="position: relative;right: 20px;top: 20px;z-index: 100;" type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				&times;
+			</span>
+			<div class="modal-body" style="padding: 0px;">
+				<iframe src="" style="width: 100%;height: 100%;position: fixed;" frameborder=0 scrolling="yes"></iframe>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>		
+		</div>
+	</div>
+
+</body>
+
+<script type="text/javascript">
+	var orderDetails = ${orderDetails == null ? "[]" : orderDetails};
+	var v_orderDetails = new Vue({
+		el:"#orderDetails",
+		data:function(){
+			return {
+				orderDetails:orderDetails,
+				tip:'',
+			}
+		},
+		methods:{
+			getOrderFlag: function(item){
+				var flag = item.flag;
+				switch(flag){
+				case <%=OrderDetail.Flag.INIT%>:
+					return "待发货";
+				case <%=OrderDetail.Flag.DELIVERED%>:
+					return "已发货";
+				case <%=OrderDetail.Flag.ACCEPTED%>:
+					return "已签收";
+				case <%=OrderDetail.Flag.APPLY_REFUND%>:
+					return "申请退款";
+				case <%=OrderDetail.Flag.COMPLETE_REFUND%>:
+					return "退款成功";
+				case <%=OrderDetail.Flag.COMPLETE_TRANSACTION%>:
+					return "交易完成";
+				case <%=OrderDetail.Flag.EVALUATED%>:
+					return "已评价";
+				}
+			},
+			getLogistics: function(item){
+				var logisticsId = item.logisticsId;
+				if(logisticsId){
+					return logisticsId;
+				}
+				return "无";
+			},
+			sendGoods:function(item){
+				this.tip="";
+				$("#myModal .modal-dialog").css({width:"350px",height:"250px"});
+				$("#myModal iframe").attr("src","sendGoods?orderDetailId="+item.orderDetailId);
+				$("#myModal").modal("show");
+			},
+			completeTransaction:function(item){
+				var orderDetailId = item.orderDetailId;
+				$.ajax({
+					url:"completeTransaction?orderDetailId="+orderDetailId,
+					type:"POST",
+					success:function(){
+						location.reload();
+					},
+					error:function(){
+						location.reload();
+					}
+				});
+			},
+		},
+	});
+	$(function(){
+		$("#myModal").on("hidden.bs.modal",function(){
+			$("#myModal .modal-dialog").css({width:"450px",height:"350px"});
+			/* app.refresh(); */
+		});
+		$('#startTime').datebox({
+		    formatter: function(date){ return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();},
+		    parser: function(date){ return new Date(Date.parse(date.replace(/-/g,"/")));}
+		});
+		$('#endTime').datebox({
+		    formatter: function(date){ return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();},
+		    parser: function(date){ return new Date(Date.parse(date.replace(/-/g,"/")));}
+		});
+		$("[data-toggle='tooltip']").tooltip();
+	})
+	
+	
+</script>
+</html>

@@ -1,0 +1,5 @@
+@charset "UTF-8";
+.layout-panel-west > .panel-header .panel-title{
+	text-align: center;
+	margin-left: -20px;
+}

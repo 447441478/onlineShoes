@@ -1,0 +1,128 @@
+@charset "UTF-8";
+.product{
+	width: 50%;
+	display: inline-block;
+	float: left;
+	padding-bottom: 10px;
+}
+.product .item{
+    width: 100%;
+    margin: 3px 0;
+    padding: 0;
+    height: 24px;
+    line-height: 24px;
+    clear: both;
+    font-size: 12px;
+}
+.product .item .leftItem{
+    width: 30%;
+    height:24px;
+    float: left;
+    text-align: right;
+    margin-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.product .item .rightItem{
+    width: 67%;
+    float: left;
+    text-align: left;
+}
+.product .item .rightItem:before{
+	content: "：";
+    float: left;
+}
+.product .item .rightItem input,select{
+	height: 23px;
+	width: 147px!important;
+}
+.product .item .rightItem label{
+	cursor: pointer;
+}
+.product .item .rightItem input[type="radio"]{
+	height: 12px;
+	width: 12px!important;
+	position: relative;
+	top: 2px;
+	margin-left: 5px;
+	cursor: pointer;
+}
+.fc-g {
+    color: rgb(153, 153, 153);
+    margin-left: 6px;
+}
+.sizeAndAmount{
+	width: 50%;
+	display: inline-block;
+	padding-right: 40px;
+	box-sizing: border-box;
+	float: left;
+}
+.sizeAndAmount table{
+	font-size: 12px;
+}
+.sizeAndAmount table th{
+	width: 160px;
+}
+.sizeAndAmount table td{
+	text-align: center;
+	margin-top: 8px; 
+}
+.sizeAndAmount table td input{
+	height: 23px;
+	width: 147px!important;
+	text-align: center;
+}
+.sizeAndAmount table td input[type="checkbox"]{
+	height: 16px;
+	width: 16px!important;
+	position:relative;
+	top: 1px;
+}
+.sizeAndAmount table td:first-child input {
+	border: none;
+	width: 36px!important;
+}
+.sizeAndAmount table td:last-child {
+	text-align: left;
+}
+.sizeAndAmount .delBtn{
+	width: 36px;
+	height:23px;
+	line-height:23px;
+	text-align:center;
+	color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    border-radius: 5px;
+    box-sizing:border-box;
+    cursor: pointer;
+}
+.sizeAndAmount .addBtn{
+	margin-top:8px;
+	font-size: 14px;
+	font-family: 微软雅黑;
+	width: 56px;
+	height: 25px;
+	line-height: 25px;
+	border-radius:5px;
+	cursor:pointer;
+	background: #f7f8fa;
+	text-align: center;
+	border: 1px solid #c4c6cf;
+}
+.bottomBtn{
+	padding-top: 14px;
+	border-top: 1px solid rgb(233, 235, 240);
+}
+.save{
+	margin-left: 36%;
+	height: 25px;
+	padding: 2px 5px;
+	background: rgb(73, 163, 255);
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	color: #fff;
+}

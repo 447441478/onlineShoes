@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+		
+	<!-- Spring配置文件：这里主要配置和业务逻辑有关的配置 - 数据源、事务控制 ... -->
+	
+	<!-- 配置组件扫描 -->
+	<context:component-scan base-package="net.hncu.onlineShoes">
+		<!-- 与SpringMVC不同，这里除了不扫描Controller，其他都扫描 -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 配置数据库连接池 -->
+	<!-- 读取连接数据库的配置文件 -->
+	<context:property-placeholder location="classpath:dbconfig.properties"/>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="driverClass" value="${jdbc.driver}"></property>
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	<!-- ///////////////// Mybatis整合 //////////////////////// -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 使用c3p0连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 指定 mybatis 全局配置文件位置 -->
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<!-- 指定所有 mapper 配置文件位置 -->
+		<property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+	</bean>
+	
+	<!-- 配置扫描器，将mybatis接口实现类加入到ioc容器中 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="net.hncu.onlineShoes.domain"/>
+	</bean>
+	
+	<!-- 配置一个sqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
+		<!-- <constructor-arg name="executorType" value="BATCH"></constructor-arg> -->
+	</bean>
+	<!-- /////////////////////Mybatis/////////////////////// -->
+	
+	
+	
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 受控制 的数据源 -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 采用配置的方式进行事务控制 -->
+	<aop:config>
+		<!-- 需要拦截的切入点表达式 - 用于事务控制 -->
+		<aop:pointcut expression="execution( * net.hncu.onlineShoes..service..*(..))" id="txPointcut"/>
+		<!-- 切面 - 用于事务控制 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>		
+	</aop:config>
+	<!-- 事务通知，精确控制事务 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" />
+			<tx:method name="get*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- ++++++++++++++以上是Spring容器的核心配置++++++++++++++ -->
+	
+	<!-- 配置文件上传解析bean -->
+	 <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--上传文件的最大大小  5M -->
+        <property name="maxUploadSize" value="5242880"></property>
+      	<!-- 上传文件的编码 --> 
+       <property name="defaultEncoding" value="UTF-8"></property> 
+   	</bean>
+	
+</beans>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hncu.onlineShoes.domain.ShoesItemMapper">
+  <resultMap id="BaseResultMap" type="net.hncu.onlineShoes.domain.ShoesItem">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <id column="shoes_id" jdbcType="INTEGER" property="shoesId" />
+    <id column="shoes_size_id" jdbcType="INTEGER" property="shoesSizeId" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    user_id, shoes_id, shoes_size_id, amount, flag
+  </sql>
+  <select id="selectByExample" parameterType="net.hncu.onlineShoes.domain.ShoesItemExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from shoesitem
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="net.hncu.onlineShoes.domain.ShoesItemKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from shoesitem
+    where user_id = #{userId,jdbcType=INTEGER}
+      and shoes_id = #{shoesId,jdbcType=INTEGER}
+      and shoes_size_id = #{shoesSizeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="net.hncu.onlineShoes.domain.ShoesItemKey">
+    delete from shoesitem
+    where user_id = #{userId,jdbcType=INTEGER}
+      and shoes_id = #{shoesId,jdbcType=INTEGER}
+      and shoes_size_id = #{shoesSizeId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="net.hncu.onlineShoes.domain.ShoesItemExample">
+    delete from shoesitem
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="net.hncu.onlineShoes.domain.ShoesItem">
+    insert into shoesitem (user_id, shoes_id, shoes_size_id, 
+      amount, flag)
+    values (#{userId,jdbcType=INTEGER}, #{shoesId,jdbcType=INTEGER}, #{shoesSizeId,jdbcType=INTEGER}, 
+      #{amount,jdbcType=INTEGER}, #{flag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="net.hncu.onlineShoes.domain.ShoesItem">
+    insert into shoesitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="shoesId != null">
+        shoes_id,
+      </if>
+      <if test="shoesSizeId != null">
+        shoes_size_id,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="flag != null">
+        flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="shoesId != null">
+        #{shoesId,jdbcType=INTEGER},
+      </if>
+      <if test="shoesSizeId != null">
+        #{shoesSizeId,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="net.hncu.onlineShoes.domain.ShoesItemExample" resultType="java.lang.Long">
+    select count(*) from shoesitem
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update shoesitem
+    <set>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.shoesId != null">
+        shoes_id = #{record.shoesId,jdbcType=INTEGER},
+      </if>
+      <if test="record.shoesSizeId != null">
+        shoes_size_id = #{record.shoesSizeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.amount != null">
+        amount = #{record.amount,jdbcType=INTEGER},
+      </if>
+      <if test="record.flag != null">
+        flag = #{record.flag,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update shoesitem
+    set user_id = #{record.userId,jdbcType=INTEGER},
+      shoes_id = #{record.shoesId,jdbcType=INTEGER},
+      shoes_size_id = #{record.shoesSizeId,jdbcType=INTEGER},
+      amount = #{record.amount,jdbcType=INTEGER},
+      flag = #{record.flag,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="net.hncu.onlineShoes.domain.ShoesItem">
+    update shoesitem
+    <set>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+      and shoes_id = #{shoesId,jdbcType=INTEGER}
+      and shoes_size_id = #{shoesSizeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.hncu.onlineShoes.domain.ShoesItem">
+    update shoesitem
+    set amount = #{amount,jdbcType=INTEGER},
+      flag = #{flag,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+      and shoes_id = #{shoesId,jdbcType=INTEGER}
+      and shoes_size_id = #{shoesSizeId,jdbcType=INTEGER}
+  </update>
+</mapper>

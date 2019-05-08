@@ -1,0 +1,10 @@
+@charset "UTF-8";
+.carousel-indicators li{
+	background: #666;
+}
+.carousel-indicators .active{
+	background: #000;
+}
+.carousel-inner img{
+	margin: 0 auto;
+}

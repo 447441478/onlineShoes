@@ -1,0 +1,65 @@
+@charset "UTF-8";
+* {
+	margin: 0;
+	padding: 0;
+	font-family: 微软雅黑;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	font-family: 微软雅黑, "Microsoft YaHei";
+	background: url("../img/bg.jpg");
+}
+
+.myTitle {
+	display: inline-block;
+	border-collapse: separate;
+	color: rgb(7, 108, 224);
+	cursor: pointer;
+	font-size: 32px;
+	font-weight: 700;
+	height: auto;
+	text-align: center;
+	white-space: nowrap;
+	position: relative;
+	top: 25%;
+}
+
+.myTop {
+	height: 100px;
+}
+
+.myOptions {
+	margin-top: 30px;
+}
+.myOptions a,.myOptions span{
+	margin: 0 6px 0 0;
+	float: right;
+}
+.joinHotline span {
+	font-size: 15px;
+	display: block;
+}
+
+.myNav {
+	height: 40px;
+	background: #2b2b2b;
+	font-size: 15px;
+	color: #fff;
+}
+
+.myNav .item {
+	height: 40px;
+	text-align: center;
+	line-height: 40px;
+	cursor: pointer;
+}
+
+.myNav .active {
+	background: rgb(7, 108, 224);
+}
+
+.mySearch {
+	margin-top: 3px;
+}
