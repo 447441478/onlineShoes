@@ -158,8 +158,15 @@
 	</div>
 </body>
 <script type="text/javascript">
+	var checkShoesSize = ${checkShoesSize};
 	var shoes = ${shoesJson};
 	shoes.checkedIndex = -1;
+	$(shoes.shoesSizes).each(function(index){
+		console.log(checkShoesSize);
+		if(checkShoesSize == this.size){
+			shoes.checkedIndex = index;
+		}
+	});
 	shoes.buyNum = 1;
 	nav.activeBrandId = ${shoes.brandId};
 	var shoesDetail = new Vue({
