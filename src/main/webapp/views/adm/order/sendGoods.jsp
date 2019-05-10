@@ -70,7 +70,7 @@
 			return ;
 		}
 		$.ajax({
-			url:"?orderDetailId=<%=request.getParameter("orderDetailId")%>&logisticsId="+logisticsId,
+			url:"${APP_DIR}/adm/order/sendGoods?orderDetailId=<%=request.getParameter("orderDetailId")%>&logisticsId="+logisticsId,
 			type:"POST",
 			success:function(){
 				window.parent.location.reload();
