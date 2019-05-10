@@ -85,7 +85,7 @@
 									<button @click="applyRefund(item)" v-if="item.flag ==  <%=OrderDetail.Flag.INIT%>" class="btn btn-danger btn-sm" >申请退款</button>
 									<button @click="reminedDelever(item)" v-if="item.flag ==  <%=OrderDetail.Flag.INIT%>" class="btn btn-info btn-sm">提醒发货</button>
 									<button @click="confirmReceipt(item)" v-if="item.flag ==  <%=OrderDetail.Flag.DELIVERED%>" class="btn btn-info btn-sm">确认收货</button>
-									<button @click="goEvalute(item)" v-if="item.flag ==  <%=OrderDetail.Flag.ACCEPTED%>" class="btn btn-info btn-sm">去评价</button>
+									<button @click="goEvalute(item)" v-if="item.flag ==  <%=OrderDetail.Flag.ACCEPTED%> || item.flag == <%=OrderDetail.Flag.COMPLETE_TRANSACTION%>" class="btn btn-info btn-sm">去评价</button>
 								</td>
 							</tr>
 							
@@ -135,16 +135,39 @@
 					return "已评价";
 				}
 			},
+			changeOrderState:function(item,newFlag){
+				var data = {
+						orderDetailId:item.orderDetailId,
+						flag:item.flag,
+						newFlag:newFlag
+				};
+				$.ajax({
+					url:"${APP_DIR}/order/changeOrderState",
+					type:"POST",
+					data:data,
+					success:function(msg){
+						if(msg.code == <%=Msg.Code.SUCCESS%>){
+							item.flag = newFlag;
+						}else{
+							alert("系统繁忙，请稍后再试。");
+						}
+					},
+					error:function(){
+						alert("系统繁忙，请稍后再试。");
+					}
+				});
+			},
 			applyRefund:function(item){
-				item.flag = <%=OrderDetail.Flag.COMPLETE_REFUND%>;
+				this.changeOrderState(item,<%=OrderDetail.Flag.APPLY_REFUND%>);
 			},
 			reminedDelever:function(item){
-				item.flag = <%=OrderDetail.Flag.DELIVERED%>;
+				this.changeOrderState(item,<%=OrderDetail.Flag.DELIVERED%>);
 			},
 			confirmReceipt:function(item){
-				item.flag = <%=OrderDetail.Flag.ACCEPTED%>;
+				this.changeOrderState(item,<%=OrderDetail.Flag.ACCEPTED%>);
 			},
 			goEvalute:function(item){
+				
 				//item.flag = <%=OrderDetail.Flag.DELIVERED%>;
 			},
 			
