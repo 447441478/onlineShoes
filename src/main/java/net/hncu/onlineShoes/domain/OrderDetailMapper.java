@@ -21,6 +21,8 @@ public interface OrderDetailMapper {
     List<OrderDetail> selectByExampleWithShoes(OrderDetailExample example);
     
     OrderDetail selectByPrimaryKey(Integer orderDetailId);
+    
+    OrderDetail selectByPrimaryKeyWithShoes(Integer orderDetailId);
 
     int updateByExampleSelective(@Param("record") OrderDetail record, @Param("example") OrderDetailExample example);
 

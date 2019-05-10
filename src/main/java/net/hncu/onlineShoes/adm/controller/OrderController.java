@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +47,6 @@ public class OrderController {
 	public String sendGoods() {
 		return ROOT + "sendGoods";
 	}
-	
 	@RequestMapping(path="/sendGoods",method=RequestMethod.POST)
 	public Msg sendGoodsUpdate(@RequestParam(name="orderDetailId",required=true) Integer orderDetailId,
 			@RequestParam(name="logisticsId",required=true) String logisticsId) {
@@ -60,16 +60,66 @@ public class OrderController {
 		orderDetailMapper.updateByExampleSelective(record, example);
 		return Msg.success();
 	}
-	@RequestMapping(path="/completeTransaction",method=RequestMethod.POST)
-	public Msg completeTransaction(@RequestParam(name="orderDetailId",required=true) Integer orderDetailId) {
+	
+	@RequestMapping(path="/updateOrder",method=RequestMethod.GET)
+	public String updateOrder(@RequestParam(name="orderDetailId",required=true) Integer orderDetailId,
+			Model model) throws JsonProcessingException {
+		OrderDetail orderDetail = orderDetailMapper.selectByPrimaryKeyWithShoes(orderDetailId);
+		ObjectMapper om = new ObjectMapper();
+		model.addAttribute("orderDetail", om.writeValueAsString(orderDetail));
+		return ROOT + "updateOrder";
+	}
+	@RequestMapping(path="/updateOrder",method=RequestMethod.POST)
+	public Msg updateOrder(@RequestParam(name="orderDetailId",required=true) Integer orderDetailId,
+			@RequestParam(name="name",required=true) String name,
+			@RequestParam(name="tel",required=true) String tel,
+			@RequestParam(name="addr",required=true) String addr) {
 		OrderDetailExample example = new OrderDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andOrderDetailIdEqualTo(orderDetailId);
-		criteria.andFlagEqualTo(OrderDetail.Flag.ACCEPTED);
+		criteria.andFlagEqualTo(OrderDetail.Flag.INIT);
 		OrderDetail record = new OrderDetail();
-		record.setFlag(OrderDetail.Flag.COMPLETE_TRANSACTION);
+		record.setName(name);
+		record.setTel(tel);
+		record.setAddr(addr);
 		orderDetailMapper.updateByExampleSelective(record, example);
 		return Msg.success();
+	}
+	
+	@RequestMapping(path="/changeOrderState",method=RequestMethod.POST)
+	@ResponseBody
+	public Msg changeOrderState(@RequestParam(name="orderDetailId",required=true) Integer orderDetailId,
+			@RequestParam(name="flag",required=true)Integer flag,
+			@RequestParam(name="newFlag",required=true)Integer newFlag) {
+		if(orderDetailId == null || flag == null || newFlag == null) {
+			return Msg.fail();
+		}
+		OrderDetailExample example = new OrderDetailExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrderDetailIdEqualTo(orderDetailId);
+		criteria.andFlagEqualTo(flag);
+		OrderDetail record = new OrderDetail();
+		switch (flag) {
+			case OrderDetail.Flag.APPLY_REFUND:
+				if( newFlag != OrderDetail.Flag.COMPLETE_REFUND ) {
+					newFlag = null;
+				}
+				break;
+			case OrderDetail.Flag.ACCEPTED:
+				if( newFlag != OrderDetail.Flag.COMPLETE_TRANSACTION ) {
+					newFlag = null;
+				}
+				break;
+			default:
+				newFlag = null;
+		}
+		if(newFlag != null) {
+			record.setFlag(newFlag);
+			orderDetailMapper.updateByExampleSelective(record, example);
+			return Msg.success();
+		} else {
+			return Msg.fail();
+		}
 	}
 	
 }

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +24,7 @@ import net.hncu.onlineShoes.domain.OrderDetailMapper;
 import net.hncu.onlineShoes.domain.User;
 import net.hncu.onlineShoes.shoes.controller.ShoesController;
 import net.hncu.onlineShoes.user.controller.UserController;
+import net.hncu.onlineShoes.util.Msg;
 
 @RequestMapping("/order")
 @Controller
@@ -48,6 +51,52 @@ public class OrderDetailController {
 		String shoesRoot = ShoesController.getShoesRoot(request.getContextPath());
 		model.addAttribute("shoesRoot", shoesRoot);
 		return ROOT + "orderDetail";
+	}
+	
+	@RequestMapping(path="/changeOrderState",method=RequestMethod.POST)
+	@ResponseBody
+	public Msg changeOrderState(@RequestParam(name="orderDetailId",required=true) Integer orderDetailId,
+			@RequestParam(name="flag",required=true)Integer flag,
+			@RequestParam(name="newFlag",required=true)Integer newFlag) {
+		if(orderDetailId == null || flag == null || newFlag == null) {
+			return Msg.fail();
+		}
+		OrderDetailExample example = new OrderDetailExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrderDetailIdEqualTo(orderDetailId);
+		criteria.andFlagEqualTo(flag);
+		OrderDetail record = new OrderDetail();
+		switch (flag) {
+			case OrderDetail.Flag.INIT:
+				if( newFlag != OrderDetail.Flag.APPLY_REFUND && newFlag !=  OrderDetail.Flag.DELIVERED ) {
+					newFlag = null;
+				}
+				break;
+			case OrderDetail.Flag.DELIVERED:
+				if( newFlag != OrderDetail.Flag.ACCEPTED ) {
+					newFlag = null;
+				}
+				break;
+			case OrderDetail.Flag.ACCEPTED:
+				if( newFlag != OrderDetail.Flag.COMPLETE_TRANSACTION ) {
+					newFlag = null;
+				}
+				break;
+			case OrderDetail.Flag.COMPLETE_TRANSACTION:
+				if( newFlag != OrderDetail.Flag.EVALUATED ) {
+					newFlag = null;
+				}
+				break;
+			default:
+				newFlag = null;
+		}
+		if(newFlag != null) {
+			record.setFlag(newFlag);
+			orderDetailMapper.updateByExampleSelective(record, example);
+			return Msg.success();
+		} else {
+			return Msg.fail();
+		}
 	}
 	
 }
