@@ -48,6 +48,13 @@ label {
 .setting span:hover{
 	color:#5874d8;
 }
+.shoesName{
+	cursor: pointer;
+	margin-right: 16px;
+}
+.shoesName:hover{
+	color: #5874d8;
+}
 </style>
 </head>
 <%
@@ -142,13 +149,15 @@ $.fn.datebox.defaults.parser = function(s){
 									快递单号：{{getLogistics(item)}}
 								</td>
 								<td colspan="2" class="setting">
-									<span class="glyphicon glyphicon-edit" style="cursor: pointer;margin-right: 16px;">&ensp;修改</span>
-									<span class="glyphicon glyphicon-cog" style="cursor: pointer;">&ensp;编辑状态</span>
+									<span @click="updateOrder(item)" v-if="item.flag == <%=OrderDetail.Flag.INIT%>" class="glyphicon glyphicon-edit" style="cursor: pointer;margin-right: 16px;">&ensp;修改</span>
 								</td>
 							</tr>
 							<tr style="background-color: #fff;">
 								<td></td>
-								<td style="white-space:normal;text-align: left;">{{item.shoes.name}}</td>
+								<td style="white-space:normal;text-align: left;">
+									<span class="shoesName" @click="openShoes(item)">{{item.shoes.name}}</span>
+									<span style="border-left: 1px solid #000;padding-left: 16px;">尺码：{{item.shoesSize}}</span>
+								</td>
 								<td style="vertical-align: middle;border-left: 1px solid rgb(221,221,221);">￥{{Number(item.price).toFixed(2)}} x {{item.amount}}</td>
 								<td style="border-left: 1px solid rgb(221,221,221);">
 									<div>
@@ -166,6 +175,7 @@ $.fn.datebox.defaults.parser = function(s){
 									{{getOrderFlag(item)}}<br/>
 									<button @click.stop='sendGoods(item)' v-if="item.flag == <%=OrderDetail.Flag.INIT%>" type="button" class="btn btn-info btn-sm" style="margin-top: 6px;">发货</button>
 									<button @click.stop='completeTransaction(item)' v-if="item.flag == <%=OrderDetail.Flag.ACCEPTED%>" type="button" class="btn btn-info btn-sm" style="margin-top: 6px;">交易完成</button>
+									<button @click.stop='completeRefund(item)' v-if="item.flag == <%=OrderDetail.Flag.APPLY_REFUND%>" type="button" class="btn btn-info btn-sm" style="margin-top: 6px;">确认退款</button>
 								</td>
 							</tr>
 						</template>
@@ -236,19 +246,44 @@ $.fn.datebox.defaults.parser = function(s){
 				$("#myModal iframe").attr("src","sendGoods?orderDetailId="+item.orderDetailId);
 				$("#myModal").modal("show");
 			},
-			completeTransaction:function(item){
-				var orderDetailId = item.orderDetailId;
+			updateOrder: function(item){
+				this.tip="";
+				$("#myModal .modal-dialog").css({width:"600px",height:"450px"});
+				$("#myModal iframe").attr("src","updateOrder?orderDetailId="+item.orderDetailId);
+				$("#myModal").modal("show");
+			},
+			changeOrderState: function(item,newFlag){
+				var data = {
+						orderDetailId:item.orderDetailId,
+						flag:item.flag,
+						newFlag:newFlag
+				};
 				$.ajax({
-					url:"completeTransaction?orderDetailId="+orderDetailId,
+					url:"${APP_DIR}/adm/order/changeOrderState",
 					type:"POST",
-					success:function(){
-						location.reload();
+					data:data,
+					success:function(msg){
+						if(msg.code == <%=Msg.Code.SUCCESS%>){
+							item.flag = newFlag;
+						}else{
+							alert("系统繁忙，请稍后再试。");
+						}
 					},
 					error:function(){
-						location.reload();
+						alert("系统繁忙，请稍后再试。");
 					}
 				});
 			},
+			completeTransaction: function(item){
+				this.changeOrderState(item,<%=OrderDetail.Flag.COMPLETE_TRANSACTION%>);
+			},
+			completeRefund:function(item){
+				this.changeOrderState(item,<%=OrderDetail.Flag.COMPLETE_REFUND%>);
+			},
+			openShoes:function(item){
+				window.open("${APP_DIR}/shoes/"+item.shoesId+"?size="+item.shoesSize);
+			},
+			
 		},
 	});
 	$(function(){
