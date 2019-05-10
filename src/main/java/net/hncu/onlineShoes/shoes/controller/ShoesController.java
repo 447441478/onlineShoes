@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.URIDereferencer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -105,11 +104,12 @@ public class ShoesController {
 	}
 	
 	@RequestMapping(value="/shoes/{id}",method=RequestMethod.GET)
-	public String product(@PathVariable Integer id,Model model) throws JsonProcessingException {
+	public String product(@PathVariable Integer id,@RequestParam(name="size",defaultValue="-1") Integer shoeSize,Model model) throws JsonProcessingException {
 		Shoes shoes = shoesService.getShoesById(id);
 		ObjectMapper mapper = new ObjectMapper();
 		model.addAttribute("shoes", shoes);
 		model.addAttribute("shoesJson", mapper.writeValueAsString(shoes));
+		model.addAttribute("checkShoesSize", shoeSize);
 		return "shoesDetail";
 	}
 	@RequestMapping(value="/products/search",method={RequestMethod.GET})
