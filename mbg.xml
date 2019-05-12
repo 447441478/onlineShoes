@@ -39,6 +39,8 @@
 		<table tableName="brand" domainObjectName="Brand"></table> -->
 		<!-- <table tableName="orderdetail" domainObjectName="OrderDetail"></table> -->
 		<!-- <table tableName="shoesItem" domainObjectName="ShoesItem"></table> -->
+		<!-- <table tableName="comment" domainObjectName="Comment"></table> -->
+		
 		<!-- <table tableName="shoestype" domainObjectName="ShoesType"></table> -->
 		<!-- <table tableName="address" domainObjectName="Address"></table> -->
 

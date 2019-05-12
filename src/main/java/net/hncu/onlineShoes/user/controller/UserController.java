@@ -1,6 +1,7 @@
 package net.hncu.onlineShoes.user.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,14 +11,22 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.hncu.onlineShoes.domain.Address;
+import net.hncu.onlineShoes.domain.AddressExample;
+import net.hncu.onlineShoes.domain.AddressMapper;
 import net.hncu.onlineShoes.domain.ShoesItemMapper;
 import net.hncu.onlineShoes.domain.User;
 import net.hncu.onlineShoes.domain.UserExample;
+import net.hncu.onlineShoes.domain.UserExample.Criteria;
 import net.hncu.onlineShoes.domain.UserMapper;
 import net.hncu.onlineShoes.user.service.UserService;
 import net.hncu.onlineShoes.util.CheckCodeGenerator;
@@ -37,6 +46,9 @@ public class UserController {
 	
 	@Autowired
 	ShoesItemMapper shoesItemMapper;
+	
+	@Autowired
+	AddressMapper addressMapper;
 	
 	@RequestMapping(path="/regist",method=RequestMethod.GET)
 	public String registIndex() {
@@ -142,6 +154,9 @@ public class UserController {
 	public static boolean checkEmail(String email) {
 		if(email == null)
 			return false;
+		if(email.length()>50) {
+			return false;
+		}
 		return email.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
 	}
 	public static boolean checkUser(User user) {
@@ -154,16 +169,86 @@ public class UserController {
 		return checkUsername && checkEmail && checkPassword;
 	}
 	
-	@RequestMapping(path="memberCenter",method=RequestMethod.GET)
-	public String memberCenterIndex(HttpSession session) {
+	@RequestMapping(path="/memberCenter",method=RequestMethod.GET)
+	public String memberCenterIndex(HttpSession session, Model model) throws JsonProcessingException {
 		User user = getUser(session);
 		if(user == null || user.getUserId() == 0) {
 			return loginIndex(session);
 		}
+		Integer userId = user.getUserId();
+		AddressExample example = new AddressExample();
+		example.createCriteria().andUserIdEqualTo(userId);
+		List<Address> addrs = addressMapper.selectByExample(example);
+		Address address = new Address();
+		if(addrs.size() > 0) {
+			address = addrs.get(0);
+		}
+		ObjectMapper om = new ObjectMapper();
+		model.addAttribute("address", om.writeValueAsString(address));
 		return ROOT+"memberCenter";
+	}
+	@ResponseBody
+	@RequestMapping(path="/updateMember",method=RequestMethod.POST)
+	public Msg updateMember(@RequestParam(name="email",required=true)String email,
+			@RequestParam(name="oldPwd",defaultValue="")String oldPwd,
+			@RequestParam(name="newPwd",defaultValue="")String newPwd,
+			HttpSession session) {
+		User user = getUser(session);
+		if(!checkEmail(email)) {
+			return Msg.fail().setInfo("邮箱格式错误");
+		}
+		UserExample example = new UserExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andUserIdEqualTo(user.getUserId());
+		User user2 = new User();
+		user2.setUserId(user.getUserId());
+		user2.setEmail(email);
+		if(!"".equals(oldPwd)) {
+			if(!checkPassword(oldPwd)) {
+				return Msg.fail().setInfo("旧密码格式错误");
+			}
+			if(!checkPassword(newPwd)) {
+				return Msg.fail().setInfo("新密码格式错误");
+			}
+			if(!oldPwd.equals(user.getPassword())) {
+				return Msg.fail().setInfo("旧密码不正确");
+			}
+			criteria.andPasswordEqualTo(oldPwd);
+			user2.setPassword(newPwd);
+		}
+		int i = userMapper.updateByExampleSelective(user2, example);
+		if(i == 1) {
+			user.setEmail(email);
+			if(oldPwd.equals(user.getPassword())) {
+				user.setPassword(newPwd);
+			}
+		}
+		return Msg.success().setInfo(i);
 	}
 	
 	public static User getUser(HttpSession session) {
 		return (User) session.getAttribute("user");
 	}
+	
+	@ResponseBody
+	@RequestMapping(path="/addAddr",method=RequestMethod.POST)
+	public Msg addAddr(Address address,
+			HttpSession session) {
+		User user = UserController.getUser(session);
+		Integer userId = user.getUserId();
+		AddressExample example = new AddressExample();
+		example.createCriteria().andUserIdEqualTo(userId);
+		List<Address> addrs = addressMapper.selectByExample(example);
+		address.setUserId(userId);
+		address.setCreateTime(new Date());
+		if(addrs.size() == 0) {
+			addressMapper.insertSelective(address);
+		} else {
+			address.setAddrId(addrs.get(0).getAddrId());
+			addressMapper.updateByPrimaryKeySelective(address);
+		}
+		return Msg.success();
+	}
+	
+	
 }

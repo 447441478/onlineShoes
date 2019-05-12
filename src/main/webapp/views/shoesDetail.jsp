@@ -1,3 +1,4 @@
+<%@page import="net.hncu.onlineShoes.util.Msg"%>
 <%@page import="net.hncu.onlineShoes.util.FileUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -95,6 +96,20 @@
     width: 178px;
     cursor: pointer;
 }
+.comment{
+	margin-top: 20px;
+}
+.comment .tabBar{
+	height: 48px;
+	font-size: 18px;
+	line-height: 48px;
+	background: #f5f5f5;
+	border-bottom: 3px solid #fff;
+}
+.comment .tabBar .tab{
+	color: #f00;
+}
+
 </style>
 <title>产品详情</title>
 </head>
@@ -152,12 +167,34 @@
 				</div>
 			</div>
 		</div>
+		<div class="row comment"  id="comments">
+			<div class="col-md-12 tabBar">
+				<span class="tab">产品评论</span>
+			</div>
+			<div class="col-md-12" v-for="item in comments" style="background: #f5f5f5;padding-bottom: 8px;padding-top:6px;border-bottom: 1px solid #eee;">
+				<span style="width: 70px;text-align: left;display: inline-block;">
+					<i class="glyphicon glyphicon-user" style="color: #f00;"></i>
+					{{item.userName}}
+				</span>
+				<span style="color: #828282;">{{new Date(item.createTime).toLocaleString()}}</span>
+				<pre style="color: #555;border: none;">{{item.content}}</pre>
+			</div>
+			<template v-if='canComment'>
+				<div class="col-md-8 col-md-offset-2" style="text-align: center;margin-top: 20px;">
+					<textarea rows="5" cols="100" style="border: #ddd 1px solid;border-radius: 5px;" v-model='content' placeholder="产品评论"></textarea>
+				</div>
+				<div class="col-md-2 col-md-offset-5" style="text-align: center;margin-top: 20px;">
+					<button type="button" class="btn btn-danger" @click='commitComment()'>提交评论</button>
+				</div>
+			</template>
+		</div>
 		<br/><br/>
 		<!-- 底部 -->
 		<jsp:include page="/inc/footer_inc.jsp" />
 	</div>
 </body>
 <script type="text/javascript">
+	
 	var checkShoesSize = ${checkShoesSize};
 	var shoes = ${shoesJson};
 	shoes.checkedIndex = -1;
@@ -169,7 +206,7 @@
 	});
 	shoes.buyNum = 1;
 	nav.activeBrandId = ${shoes.brandId};
-	var shoesDetail = new Vue({
+	var v_shoesDetail = new Vue({
 		 el:"#shoesDetail",
 		 data:shoes,
 		 computed:{
@@ -253,6 +290,51 @@
 				 
 			 }
 		 }
+	});
+	
+	var canComment = ${canComment};
+	var comments = ${comments};
+	var v_comments = new Vue({
+		el: "#comments",
+		data:function(){
+			return {
+				canComment: canComment,
+				comments: comments,
+				content: '',
+			}
+		},
+		methods:{
+			commitComment: function(){
+				var content = this.content;
+				if(!content){
+					alert("评论内容不能为哟");
+					return ;
+				}
+				if(content.length > (1<<16)){
+					alert("评论内容长度不能超过65535个字符哟");
+					return ;
+				}
+				var data = {
+					orderDetailId: ${orderDetailId},
+					content: content,
+				};
+				$.ajax({
+					url:"${APP_DIR}/comment/commit",
+					type:"POST",
+					data:data,
+					success:function(msg){
+						if(msg.code == <%=Msg.Code.SUCCESS%>){
+							window.location.reload();
+						}else{
+							alert("系统繁忙，请稍后再试。");
+						}
+					},
+					error:function(){
+						alert("系统繁忙，请稍后再试。");
+					}
+				});
+			},
+		}
 	});
 </script>
 </html>

@@ -50,18 +50,22 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 		}
 		return canIn;
 	}
-	private static String[] noLoginUri;
+	/**
+	 * 未登录禁止进入的uri
+	 */
+	private static String[] noLoginBanUri;
 	static {
-		noLoginUri = new String[] {
+		noLoginBanUri = new String[] {
 			"/basket",
 			"/buy",
-			"/adm"
+			"/adm",
+			"/order",
 		};
 	}
 	private boolean canInNoLogin(String uri) {
 		if(uri == null) 
 			return false;
-		for (String str: noLoginUri) {
+		for (String str: noLoginBanUri) {
 			if(uri.indexOf(str) > 0) {
 				return false;
 			}

@@ -231,7 +231,7 @@ var regist = new Vue({
 					url:"${APP_DIR}/user/regist",
 					data:{
 						username:that.username,
-						password:md5(that.password),
+						password: md5(that.password),
 						email:that.email,
 					},
 					type:"POST",

@@ -57,14 +57,13 @@ label {
 }
 </style>
 </head>
-<%
+<%	
+	String startTime = "2019-04-01 00:00:00";
 	Calendar c = Calendar.getInstance();
-	c.add(Calendar.DAY_OF_MONTH, -1);
 	c.set(Calendar.HOUR_OF_DAY, 0);
 	c.set(Calendar.MINUTE, 0);
 	c.set(Calendar.SECOND, 0);
-	String startTime = DateUtil.dateTimeConversionString(c.getTime());
-	c.add(Calendar.DAY_OF_MONTH, 2);
+	c.add(Calendar.DAY_OF_MONTH, 1);
 	String endTime = DateUtil.timeConversionString(c.getTime().getTime()-1000);
 %>
 <script type="text/javascript">
@@ -96,10 +95,10 @@ $.fn.datebox.defaults.parser = function(s){
 					</div>
 					<div class="form-group">
 						<label>支付方式：</label>
-						<select class="form-control">
-							<option>全部</option>	
-							<option>货到付款</option>	
-							<option>在线支付</option>	
+						<select id='payMethod' class="form-control">
+							<option value="-1">全部</option>	
+							<option value="<%=OrderDetail.Paymethod.DEFAULT%>">货到付款</option>	
+							<option value="<%=OrderDetail.Paymethod.ONLINE_PAY%>">在线支付</option>	
 						</select>
 					</div>
 					<div class="form-group">
@@ -108,6 +107,7 @@ $.fn.datebox.defaults.parser = function(s){
 						<i class="glyphicon glyphicon-resize-horizontal"></i>
 						<input class="easyui-datebox" id="endTime" name="endTime" value='<%=endTime%>' style="width:110px">
 					</div>
+					<div @click.stop="search()" class="btn btn-default" style="margin-left: 8px;">搜索</div>
 					<br/><br/>
 				</form>
 			</div>
@@ -116,7 +116,6 @@ $.fn.datebox.defaults.parser = function(s){
 				<table class="table table-striped" style="margin-bottom: 0;font-size: 13px;font-family: 微软雅黑;table-layout: fixed;">
 					<thead>
 						<tr>
-							<th width="40px;"><input style="cursor: pointer;" class="cbxAll" type="checkbox" @click.stop="checkChangeAll()"/></th>
 							<th style="width: 200px;" @click="changeOrder('<%=SearchField.ShoesDef.NAME %>')">
 								产品名称
 							</th>
@@ -134,13 +133,12 @@ $.fn.datebox.defaults.parser = function(s){
 							</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody v-if = 'orderDetails.length > 0'>
 						<template v-for="(item,index) in orderDetails">
 							<tr style="background-color: #fff;height: 13px;border-top:1px solid rgb(221,221,221);">
-								<td colspan="6"></td>
+								<td colspan="5"></td>
 							</tr>
 							<tr>
-								<td><input type="checkbox"></td>
 								<td colspan="3" style="text-align: left;">
 									{{new Date(item.createTime).toLocaleString()}}
 									&emsp;
@@ -153,7 +151,6 @@ $.fn.datebox.defaults.parser = function(s){
 								</td>
 							</tr>
 							<tr style="background-color: #fff;">
-								<td></td>
 								<td style="white-space:normal;text-align: left;">
 									<span class="shoesName" @click="openShoes(item)">{{item.shoes.name}}</span>
 									<span style="border-left: 1px solid #000;padding-left: 16px;">尺码：{{item.shoesSize}}</span>
@@ -181,8 +178,8 @@ $.fn.datebox.defaults.parser = function(s){
 						</template>
 					</tbody>
 				</table>
-				<!-- <div v-if='pageInfo.total == 0'>很抱歉，没有找到符合的数据。</div> -->
-				<!-- <products-pagination :page-info="pageInfo"></products-pagination> -->
+				<div v-if='pageInfo.total == 0'>很抱歉，没有找到符合的数据。</div>
+				<products-pagination :page-info="pageInfo"></products-pagination>
 			</div>
 		</div>	
 <!-- 模式对话框 -->
@@ -204,13 +201,19 @@ $.fn.datebox.defaults.parser = function(s){
 </body>
 
 <script type="text/javascript">
+	var pageSize = 10;
 	var orderDetails = ${orderDetails == null ? "[]" : orderDetails};
-	var v_orderDetails = new Vue({
+	var vm_orderDetails = new Vue({
 		el:"#orderDetails",
 		data:function(){
 			return {
-				orderDetails:orderDetails,
+				orderDetails: orderDetails,
 				tip:'',
+				pageInfo: {
+					currentPage:1,
+					total:0,
+					pageSize:pageSize,
+				},
 			}
 		},
 		methods:{
@@ -283,8 +286,60 @@ $.fn.datebox.defaults.parser = function(s){
 			openShoes:function(item){
 				window.open("${APP_DIR}/shoes/"+item.shoesId+"?size="+item.shoesSize);
 			},
-			
+			search: function(){
+				this.pageInfo.currentPage = 1;
+				this.refresh();
+			},
+			getSearchArg:function(){
+				return {
+					currentPage:this.pageInfo.currentPage,
+					pageSize:this.pageInfo.pageSize,
+					keyWord:$("#keyWord").val(),
+					payMethod:$("#payMethod").val(),
+					startTime:new Date($("#startTime").datebox("getValue")).getTime(),
+					endTime: new Date($("#endTime").datebox("getValue")).getTime(),
+				};
+			},
+			refreshSearch:function(data){
+				$("#keyWord").val(data.keyWord);
+				$("#payMethod").val(data.payMethod);
+				try{
+					$("#startTime").datebox('setValue', data.startTime);
+					$("#endTime").datebox('setValue', data.endTime);
+				}catch(e){}
+			},
+			refresh:function(){
+				var that = this;
+				$(function(){
+					var data = that.getSearchArg();
+					$.ajax({
+						url:"${APP_DIR}/adm/order/get",
+						data:data,
+						type:"get",
+						success:function(msg){
+							if(msg.code == <%=Msg.Code.SUCCESS%>){
+								that.pageInfo.total = msg.datas.total;
+								that.orderDetails = msg.datas.orderDetails;
+								that.refreshSearch(msg.datas);
+							}
+						}
+					});
+				})
+			},
 		},
+		watch:{
+			'pageInfo.currentPage':function(val){
+				this.refresh();
+			},
+			'pageInfo.total':function(val){
+				if(val != 0 && val < this.pageInfo.currentPage*this.pageInfo.pageSize){
+					this.pageInfo.currentPage = parseInt((val+this.pageInfo.pageSize-1)/this.pageInfo.pageSize);
+				}
+			},
+		},
+		created:function(){
+			this.refresh();			
+		}
 	});
 	$(function(){
 		$("#myModal").on("hidden.bs.modal",function(){

@@ -167,8 +167,7 @@
 				this.changeOrderState(item,<%=OrderDetail.Flag.ACCEPTED%>);
 			},
 			goEvalute:function(item){
-				
-				//item.flag = <%=OrderDetail.Flag.DELIVERED%>;
+				window.open("${APP_DIR}/shoes/"+item.shoesId+"?orderDetailId="+item.orderDetailId);
 			},
 			
 		}

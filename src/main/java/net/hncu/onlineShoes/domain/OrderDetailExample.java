@@ -795,6 +795,15 @@ public class OrderDetailExample {
             addCriterion("flag not between", value1, value2, "flag");
             return (Criteria) this;
         }
+        
+        public Criteria andFlagBitOr(Integer value) {
+        	addCriterion("flag | " + value + " = " + value);
+        	return (Criteria) this;
+        }
+        public Criteria andFlagBitAnd(Integer value) {
+        	addCriterion("flag & " + value + " = " + value);
+        	return (Criteria) this;
+        }
 
         public Criteria andPaymethodIsNull() {
             addCriterion("payMethod is null");
@@ -854,6 +863,14 @@ public class OrderDetailExample {
         public Criteria andPaymethodNotBetween(Integer value1, Integer value2) {
             addCriterion("payMethod not between", value1, value2, "paymethod");
             return (Criteria) this;
+        }
+        public Criteria andPaymethodBitOr(Integer value) {
+        	addCriterion("payMethod | " + value + " = " + value);
+        	return (Criteria) this;
+        }
+        public Criteria andPaymethodBitAnd(Integer value) {
+        	addCriterion("payMethod & " + value + " = " + value);
+        	return (Criteria) this;
         }
 
         public Criteria andLogisticsIdIsNull() {
@@ -925,6 +942,14 @@ public class OrderDetailExample {
             addCriterion("logistics_id not between", value1, value2, "logisticsId");
             return (Criteria) this;
         }
+        
+        public Criteria andShoesNameLike(String value) {
+        	 if (value == null) {
+                 throw new RuntimeException("Value for shoes.name cannot be null");
+             }
+        	 criteria.add(new Criterion(value, true));
+        	 return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
@@ -950,6 +975,8 @@ public class OrderDetailExample {
         private boolean listValue;
 
         private String typeHandler;
+        
+        private boolean shoesName;
 
         public String getCondition() {
             return condition;
@@ -1018,5 +1045,14 @@ public class OrderDetailExample {
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
         }
+        protected Criterion(Object value, boolean shoesName) {
+        	super();
+        	this.value = value;
+        	this.shoesName = shoesName;
+        }
+
+		public boolean isShoesName() {
+			return shoesName;
+		}
     }
 }

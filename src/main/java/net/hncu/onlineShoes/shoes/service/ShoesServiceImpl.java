@@ -142,9 +142,8 @@ public class ShoesServiceImpl implements ShoesService{
 		String orderByClause = SearchField.ShoesDef.getOrderByField(orderFiled,isDesc); 
 		PageHelper.startPage(currentPage,pageSize);
 		if(openTime && DateUtil.isBefore(startTime, endTime)) {
-			long dayMilliSeconds = 24*60*60*1000;
-			String st = DateUtil.timeConversionString(startTime/dayMilliSeconds*dayMilliSeconds);
-			String et = DateUtil.timeConversionString((endTime/dayMilliSeconds+1)*dayMilliSeconds-1000);
+			String st = DateUtil.getDayFirstSeconds(startTime);
+			String et = DateUtil.getDayLastSeconds(endTime);
 			List<Map<String, Object>> shoesList = shoesMapper.select4Manage(orderByClause,keyWord,st,et,userId);
 			PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(shoesList);
 			return Msg.success().add("total", pageInfo.getTotal()).add("shoesList", pageInfo.getList());

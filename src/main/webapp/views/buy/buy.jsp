@@ -142,12 +142,12 @@
 					return;
 				}
 				if(tel == ""){
-					alert("收货人电话不能为空.");
+					alert("收货人手机号码不能为空.");
 					return;
 				}
 				var reg = /^[1][3,4,5,7,8][0-9]{9}$/;
 				if(!reg.test(tel)){
-					alert("请输入正确的电话号码.");
+					alert("请输入正确的手机号码.");
 					return;
 				}
 				

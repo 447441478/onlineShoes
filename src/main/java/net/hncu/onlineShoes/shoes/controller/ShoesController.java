@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,8 +24,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 
+import net.hncu.onlineShoes.domain.Comment;
+import net.hncu.onlineShoes.domain.CommentExample;
+import net.hncu.onlineShoes.domain.CommentMapper;
+import net.hncu.onlineShoes.domain.OrderDetail;
+import net.hncu.onlineShoes.domain.OrderDetailMapper;
 import net.hncu.onlineShoes.domain.Shoes;
+import net.hncu.onlineShoes.domain.User;
+import net.hncu.onlineShoes.shoes.service.CommnetService;
 import net.hncu.onlineShoes.shoes.service.ShoesService;
+import net.hncu.onlineShoes.user.controller.UserController;
 import net.hncu.onlineShoes.util.FileUtil;
 import net.hncu.onlineShoes.util.Msg;
 
@@ -34,6 +43,15 @@ public class ShoesController {
 	
 	@Autowired
 	private ShoesService shoesService;
+	
+	@Autowired
+	private CommnetService commnetService;
+	
+	@Autowired
+	private OrderDetailMapper orderDetailMapper;
+	
+	@Autowired
+	private CommentMapper commentMapper;
 	
 	@RequestMapping("/home")
 	public String home() {
@@ -104,12 +122,29 @@ public class ShoesController {
 	}
 	
 	@RequestMapping(value="/shoes/{id}",method=RequestMethod.GET)
-	public String product(@PathVariable Integer id,@RequestParam(name="size",defaultValue="-1") Integer shoeSize,Model model) throws JsonProcessingException {
+	public String product(@PathVariable Integer id,
+			@RequestParam(name="size",defaultValue="-1") Integer shoeSize,
+			@RequestParam(name="orderDetailId",defaultValue="-1") Integer orderDetailId,
+			Model model) throws JsonProcessingException {
 		Shoes shoes = shoesService.getShoesById(id);
 		ObjectMapper mapper = new ObjectMapper();
 		model.addAttribute("shoes", shoes);
 		model.addAttribute("shoesJson", mapper.writeValueAsString(shoes));
 		model.addAttribute("checkShoesSize", shoeSize);
+		CommentExample example = new CommentExample();
+		example.createCriteria().andShoesIdEqualTo(id);
+		List<Comment> comments = commentMapper.selectByExampleWithBLOBs(example);
+		model.addAttribute("comments",  mapper.writeValueAsString(comments));
+		boolean canComment = false;
+		if(orderDetailId != -1) {
+			OrderDetail orderDetail = orderDetailMapper.selectByPrimaryKey(orderDetailId);
+			if(orderDetail != null) {
+				Integer flag = orderDetail.getFlag();
+				canComment = (flag != null && (flag == OrderDetail.Flag.COMPLETE_TRANSACTION || flag == OrderDetail.Flag.ACCEPTED));
+			}
+		}
+		model.addAttribute("canComment", canComment);
+		model.addAttribute("orderDetailId", orderDetailId);
 		return "shoesDetail";
 	}
 	@RequestMapping(value="/products/search",method={RequestMethod.GET})
@@ -117,6 +152,23 @@ public class ShoesController {
 		keyWord = URLDecoder.decode(keyWord, "utf-8");
 		model.addAttribute("keyWord", keyWord);
 		return "shoesList";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/comment/commit",method=RequestMethod.POST)
+	public Msg commitCommnet(Comment comment,
+			HttpSession session,
+			HttpServletRequest request) {
+		User user = UserController.getUser(session);
+		comment.setUserId(user.getUserId());
+		comment.setUserName(user.getUsername());
+		String ip = request.getRemoteHost();
+		comment.setIp(ip);
+		String res = commnetService.commitComment(comment);
+		if(res == null) {
+			return Msg.success();
+		}
+		return Msg.fail().setInfo(res);
 	}
 	
 }

@@ -72,4 +72,20 @@ public class DateUtil {
 			return false;
 		return startTime - endTime < 0;
 	}
+	/**
+	 * 获取 yyyy-MM-dd 00:00:00
+	 * @return
+	 */
+	public static String getDayFirstSeconds(long time) {
+		long dayMilliSeconds = 24*60*60*1000;
+		return timeConversionString(time/dayMilliSeconds*dayMilliSeconds);
+	}
+	/**
+	 * 获取 yyyy-MM-dd 23:59:59
+	 * @return
+	 */
+	public static String getDayLastSeconds(long time) {
+		long dayMilliSeconds = 24*60*60*1000;
+		return timeConversionString((time/dayMilliSeconds+1)*dayMilliSeconds-1000);
+	}
 }

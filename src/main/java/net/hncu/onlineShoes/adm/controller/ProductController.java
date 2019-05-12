@@ -25,6 +25,7 @@ import net.hncu.onlineShoes.domain.Shoes;
 import net.hncu.onlineShoes.domain.ShoesSize;
 import net.hncu.onlineShoes.domain.User;
 import net.hncu.onlineShoes.shoes.service.ShoesService;
+import net.hncu.onlineShoes.util.BitUtil;
 import net.hncu.onlineShoes.util.DateUtil;
 import net.hncu.onlineShoes.util.FileUtil;
 import net.hncu.onlineShoes.util.Msg;
@@ -141,7 +142,7 @@ public class ProductController {
 			return Msg.fail();
 		}
 		int flag = user.getFlag();
-		if((flag & User.Flag.SUPER_MANAGER) == User.Flag.SUPER_MANAGER) {
+		if( BitUtil.hasBit(flag, User.Flag.SUPER_MANAGER) ) {
 			return shoesServic.getAllByCondition(currentPage,pageSize,
 					keyWord,orderColum,isDesc,openTime,startTime,endTime)
 					.add("keyWord", keyWord)

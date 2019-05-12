@@ -60,6 +60,9 @@
                     #{listItem}
                   </foreach>
                 </when>
+                <when test="criterion.shoesName">
+                  and s.name like "%"#{criterion.value}"%" 
+                </when>
               </choose>
             </foreach>
           </trim>
@@ -107,7 +110,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from orderdetail
+    from orderdetail as od
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -134,12 +137,20 @@
       order by ${orderByClause}
     </if>
   </select>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from orderdetail
     where order_detail_id = #{orderDetailId,jdbcType=INTEGER}
   </select>
+  <select id="selectByPrimaryKeyWithShoes" parameterType="java.lang.Integer" resultMap="WithShoesResultMap">
+    select 
+    <include refid="WithShoes_Column_List" />
+    from orderdetail od left join shoes s on od.shoes_id = s.shoes_id
+    where od.order_detail_id = #{orderDetailId,jdbcType=INTEGER}
+  </select>
+ 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from orderdetail
     where order_detail_id = #{orderDetailId,jdbcType=INTEGER}

@@ -1,8 +1,7 @@
 package net.hncu.onlineShoes.domain;
 
 import java.util.List;
-import net.hncu.onlineShoes.domain.OrderDetail;
-import net.hncu.onlineShoes.domain.OrderDetailExample;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface OrderDetailMapper {
@@ -31,6 +30,4 @@ public interface OrderDetailMapper {
     int updateByPrimaryKeySelective(OrderDetail record);
 
     int updateByPrimaryKey(OrderDetail record);
-    
-    
 }

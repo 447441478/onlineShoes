@@ -33,7 +33,7 @@ public class OrderDetail implements Serializable{
 		public static final int COMPLETE_TRANSACTION = 5;  //交易完成
 		public static final int EVALUATED = 6;    		   //已评价
 	}
-	//在线支付 必须 ONLINE_PAY&WX_PAY / ONLINE_PAY&AL_PAY  类推
+	//在线支付 必须 (ONLINE_PAY & WX_PAY) / (ONLINE_PAY & AL_PAY)  类推
 	public static class Paymethod{
 		public static final int DEFAULT = 0x0;              //货到付款
 		public static final int ONLINE_PAY = 0x1;           //在线支付

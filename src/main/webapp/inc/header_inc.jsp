@@ -49,7 +49,13 @@
 </div>		
 <script type="text/javascript">
 	function myOrder(){
-		window.location.href = "${APP_DIR}/order";
+		var url = "${APP_DIR}/order";
+		if(${empty user}){
+			$.cookie("prePath",url,{path:"/"});
+			login();
+		}else{
+			window.location.href = url;
+		}
 	}
 
 	function shoppingCar(){

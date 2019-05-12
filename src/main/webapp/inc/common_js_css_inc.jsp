@@ -30,4 +30,7 @@
 *{
 	font-family: 'Microsoft Yahei';
 }
+input,button,a {
+    outline:0 none !important; blr:expression(this.onFocus=this.blur());
+}
 </style>

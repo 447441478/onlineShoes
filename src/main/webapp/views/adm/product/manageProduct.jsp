@@ -89,7 +89,7 @@ $.fn.datebox.defaults.parser = function(s){
 						<i class="glyphicon glyphicon-resize-horizontal"></i>
 						<input class="easyui-datebox" id="endTime" name="endTime" data-options="editable:false" value='<%=endTime%>' style="width:110px">
 					</div>
-					<div @click.stop="refresh()" class="btn btn-default">搜索</div>
+					<div @click.stop="refresh()" class="btn btn-default" style="margin-left: 8px;">搜索</div>
 				</form>
 			</div>
 			<div class="col-md-12 table-responsive">

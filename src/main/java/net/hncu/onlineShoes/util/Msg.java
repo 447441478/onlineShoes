@@ -56,6 +56,10 @@ public class Msg {
 		this.info = info;
 		return this;
 	}
+	public Msg setInfo(Object info) {
+		this.info = info.toString();
+		return this;
+	}
 	public Map<String, Object> getDatas() {
 		return datas;
 	}
