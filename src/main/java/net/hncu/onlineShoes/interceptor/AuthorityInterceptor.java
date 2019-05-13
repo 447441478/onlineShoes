@@ -76,11 +76,12 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 	private boolean canInAdm(User user) {
 		if(user == null) 
 			return false;
-		int flag = user.getFlag();
-		System.out.println(flag);
+		Integer flag = user.getFlag();
+		if(flag == null) {
+			return false;
+		}
 		for (int i : admFlags) {
 			if((flag & i) == i) {
-				System.out.println("canIn");
 				return true;
 			}
 		}

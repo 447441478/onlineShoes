@@ -22,4 +22,5 @@ public interface ShoesService {
 	String deleteShoes(Integer[] shoesIds);
 	PageInfo<Shoes> getShoesListByKeyWordPaging(String keyWord, int currentPage, int pageSize);
 	
+	List<Shoes> getHotProduct();
 }

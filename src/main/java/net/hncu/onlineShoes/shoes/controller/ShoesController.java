@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import net.hncu.onlineShoes.domain.Comment;
@@ -30,6 +31,8 @@ import net.hncu.onlineShoes.domain.CommentMapper;
 import net.hncu.onlineShoes.domain.OrderDetail;
 import net.hncu.onlineShoes.domain.OrderDetailMapper;
 import net.hncu.onlineShoes.domain.Shoes;
+import net.hncu.onlineShoes.domain.ShoesExample;
+import net.hncu.onlineShoes.domain.ShoesMapper;
 import net.hncu.onlineShoes.domain.User;
 import net.hncu.onlineShoes.shoes.service.CommnetService;
 import net.hncu.onlineShoes.shoes.service.ShoesService;
@@ -53,8 +56,24 @@ public class ShoesController {
 	@Autowired
 	private CommentMapper commentMapper;
 	
+	@Autowired
+	private ShoesMapper shoesMapper;
+	
 	@RequestMapping("/home")
-	public String home() {
+	public String home(Model model, HttpServletRequest request) throws JsonProcessingException {
+		PageHelper.startPage(0, 8);
+		ShoesExample example = new ShoesExample();
+		example.createCriteria()
+			.andStockOutEqualTo(Shoes.StockOut.UP);
+		example.setOrderByClause("online_time desc");
+		List<Shoes> shoess = shoesMapper.selectByExample(example);
+		PageInfo<Shoes> pageInfo = new PageInfo<>(shoess);
+		List<Shoes> newProduct = pageInfo.getList();
+		ObjectMapper om = new ObjectMapper();
+		model.addAttribute("newProduct", om.writeValueAsString(getViewList(newProduct, request)));
+		List<Shoes> hotProduct = shoesMapper.select4HotProduct();
+		model.addAttribute("hotProduct", om.writeValueAsString(getViewList(hotProduct, request)));
+		
 		return "home";
 	}
 	@RequestMapping("/brand/{brandId}")
@@ -73,7 +92,6 @@ public class ShoesController {
 			@RequestParam(defaultValue="16") int pageSize,
 			HttpServletRequest request) {
 			PageInfo<Shoes> pageInfo = null;
-			System.out.println(keyWord);
 			if(brandId != -1) {
 				pageInfo = shoesService.getShoesListByBrandIdPaging(brandId,currentPage,pageSize);
 			}

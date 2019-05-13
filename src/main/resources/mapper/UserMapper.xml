@@ -19,6 +19,9 @@
                 <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
+                <when test="criterion.like">
+                  and ${criterion.condition} "%"#{criterion.value}"%"
+                </when>
                 <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>

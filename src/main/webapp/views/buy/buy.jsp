@@ -49,7 +49,7 @@
 				<b>送货清单</b><br><br>
 				<div class="col-md-10 col-md-offset-1 orderDetail" style="margin-bottom: 10px;" v-for="(item,index) in orderDetails">
 					<img alt="" :src="'<%=FileUtil.PRODUCT_PATH%>/' + item.imgUuid + item.imgSuffix" style="height: 80px;width: 80px;">
-					&emsp;{{item.name}}&emsp;{{item.size}}码&emsp;￥{{getSalayPrice(item)}}&emsp;x{{item.buyNum}}&emsp;￥{{getTotalPrice(item)}}
+					&emsp;{{item.name}}&emsp;{{item.size}}码&emsp;￥{{getSalayPrice(item)}} x {{item.buyNum}}&emsp;小计：￥{{getTotalPrice(item)}}
 				</div>
 				<div class="col-md-2 col-md-offset-9">应付款：￥{{total}}</div>
 			</div>
@@ -73,6 +73,7 @@
 <script type="text/javascript">
 	nav.isShow = false;
 	var orderDetails = ${orderJson};
+	var address = ${address};
 	var vm_order = new Vue({
 		el:"#order",
 		data:function(){
@@ -80,9 +81,9 @@
 				orderDetails:orderDetails,
 				payMethod:"default",
 				payDetail:'wx',
-				name:"",
-				tel:"",
-				addr:"",
+				name: address.name,
+				tel: address.tel,
+				addr: address.address,
 			}
 		},
 		computed:{

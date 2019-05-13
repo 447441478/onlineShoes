@@ -97,6 +97,14 @@ public class UserExample {
             }
             criteria.add(new Criterion(condition, value));
         }
+        protected void addCriterion(String condition, Object value, String property, boolean isLike) {
+        	if (value == null) {
+        		throw new RuntimeException("Value for " + property + " cannot be null");
+        	}
+        	Criterion criterion = new Criterion(condition, value);
+        	criterion.like = isLike;
+        	criteria.add(criterion);
+        }
 
         protected void addCriterion(String condition, Object value1, Object value2, String property) {
             if (value1 == null || value2 == null) {
@@ -206,7 +214,7 @@ public class UserExample {
         }
 
         public Criteria andUsernameLike(String value) {
-            addCriterion("username like", value, "username");
+            addCriterion("username like", value , "username",true);
             return (Criteria) this;
         }
 
@@ -517,6 +525,11 @@ public class UserExample {
         private boolean betweenValue;
 
         private boolean listValue;
+        
+        boolean like;
+        public boolean isLike() {
+            return like;
+        }
 
         private String typeHandler;
 

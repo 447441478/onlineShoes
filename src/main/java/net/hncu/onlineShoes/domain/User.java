@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import net.hncu.onlineShoes.util.DateUtil;
+
 public class User implements Serializable{
 	public static class Flag{
 		public static final int FREE = 0x0;  //普通会员权限
@@ -19,22 +24,24 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	private Integer userId;
-
+	
     private String username;
-
+    
+    @JsonIgnore
     private String password;
 
     private String email;
-
+    
+    @JsonFormat(pattern=DateUtil.PATTERN_DATE_TIME)
     private Date createTime;
 
-    private Integer flag = Flag.FREE;
+    private Integer flag;
     
     //购物车
     private List<ShoesItem> shoppingCar = new ArrayList<ShoesItem>();
     
     public Integer getUserId() {
-        return userId == null ? 0 : userId;
+        return userId;
     }
 
     public void setUserId(Integer userId) {

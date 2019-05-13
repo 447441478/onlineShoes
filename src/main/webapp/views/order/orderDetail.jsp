@@ -10,6 +10,10 @@
 <jsp:include page="/inc/common_js_css_inc.jsp" />
 <title>我的订单</title>
 <style type="text/css">
+#orderDetails{
+	background: #fff;
+	border-radius: 5px;
+}
 #orderDetails .item{
 	height: 120px;
 	box-sizing: border-box;
@@ -43,19 +47,44 @@
 .btns button{
 	margin-top: 10px;
 }
+.tabBar{
+	font-size: 20px;
+	margin-bottom: 10px;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #eee;
+}
+.tab{
+	cursor: pointer;
+	display: inline-block;
+	width: 160px;
+	text-align: center;
+}
+.tab.active{
+	box-sizing: border-box;
+	border-bottom: 2px solid #f00;
+}
 </style>
 </head>
-<body style="background-color: #fff;background-image: none;">
+<body style="background-color: #f5f5f5;background-image: none;">
 	<!-- 整个页面容器 -->
 	<div class="container">
 		<!-- 顶部 -->
 		<jsp:include page="/inc/header_inc.jsp" />
 		<div class="row">
 			<div id="orderDetails" class="col-md-10 col-md-offset-1">
-				<div class="col-md-12" style="font-weight: bold; font-size: 20px;margin-bottom: 10px;">我的订单</div>
+				<div class="col-md-12 tabBar" >
+					<span class="tab" @click='checkTabIndex = index' v-for="(tab, index) in tabs" :class="index == checkTabIndex ? 'active' : ''">
+					{{tab.txt}}
+					</span>
+				</div>
 				<div class="col-md-12">
+					<div v-if='isEmpty'>
+						亲，您还没有相关的订单哟~ 
+					</div>
 					<table class="table table-bordered">
 						<tbody v-for="(item,index) in orderDetails" :id="item.orderDetailId">
+							<template v-if = 'canShow(index)'>
 							<!-- 订单标题行 -->
 							<tr class="success">
 								<th colspan="6" style="font-weight: bold;color:#fd8704" >
@@ -98,23 +127,53 @@
 								<th colspan="6" >&nbsp;</th>
 							</tr>
 							<!-- 换行 -->
+							</template>
 						</tbody>
-					
 					</table>
+					<products-pagination :page-info="pageInfo"></products-pagination>
 				</div>
 			</div>
 		</div>
 	</div>	
 </body>
 <script type="text/javascript">
+	var tabs = [
+		{
+			txt:"我的订单",
+			flag:-1,
+		},
+		{
+			txt:"待发货",
+			flag:<%=OrderDetail.Flag.INIT%>,
+		},
+		{	txt:"已发货",
+			flag:<%=OrderDetail.Flag.DELIVERED%>,
+		},
+		{	
+			txt:"交易完成",
+			flag:<%=OrderDetail.Flag.COMPLETE_TRANSACTION%>,
+		},
+	];
 	nav.isShow = false;
 	var orderDetails = ${orderDetails};	
 	var vm_orderDetails = new Vue({
 		el:"#orderDetails",
 		data:function(){
 			return{
-				orderDetails:orderDetails,
+				orderDetails: orderDetails,
+				tabs: tabs,
+				checkTabIndex: 0,
+				pageInfo:{
+					currentPage:1,
+					total: orderDetails.length,
+					pageSize: 10,
+				},
 			}
+		},
+		computed:{
+			isEmpty: function(){
+				return this.orderDetails.length == 0;
+			},
 		},
 		methods:{
 			getOrderState:function(item){
@@ -136,6 +195,7 @@
 				}
 			},
 			changeOrderState:function(item,newFlag){
+				var that = this;
 				var data = {
 						orderDetailId:item.orderDetailId,
 						flag:item.flag,
@@ -148,6 +208,7 @@
 					success:function(msg){
 						if(msg.code == <%=Msg.Code.SUCCESS%>){
 							item.flag = newFlag;
+							that.staticRefresh();
 						}else{
 							alert("系统繁忙，请稍后再试。");
 						}
@@ -169,7 +230,40 @@
 			goEvalute:function(item){
 				window.open("${APP_DIR}/shoes/"+item.shoesId+"?orderDetailId="+item.orderDetailId);
 			},
-			
+			staticRefresh: function(){
+				var checkTabIndex = this.checkTabIndex;
+				var flag = this.tabs[checkTabIndex].flag;
+				if(flag == -1){
+					this.orderDetails = orderDetails;
+					this.pageInfo.total = this.orderDetails.length;
+					return ;
+				}
+				var temp = [];
+				$(orderDetails).each(function(){
+					if(this.flag == flag){
+						temp.push(this);
+					}
+				})
+				this.orderDetails = temp;
+				this.pageInfo.total = this.orderDetails.length;
+			},
+			canShow: function(index){
+				var begin = (this.pageInfo.currentPage-1)*this.pageInfo.pageSize;
+				var end = begin + this.pageInfo.pageSize;
+				if(index >= begin && index<end){
+					return true;
+				}
+				return false;
+			}
+		},
+		watch:{
+			checkTabIndex: function(newVal, oldVal){
+				if(newVal == oldVal){
+					return ;
+				}
+				this.pageInfo.currentPage = 1;
+				this.staticRefresh();
+			}
 		}
 	});
 </script>

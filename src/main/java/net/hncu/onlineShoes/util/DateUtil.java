@@ -8,11 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtil {
-	public static final String PATTERN_DateTime = "yyyy-MM-dd HH:mm:ss";
-	public static final String PATTERN_Date = "yyyy-MM-dd";
+	public static final String PATTERN_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
+	public static final String PATTERN_DATE = "yyyy-MM-dd";
 	//日期格式模板
-	private static final SimpleDateFormat sdf_DateTime = new SimpleDateFormat(PATTERN_DateTime);
-	private static final SimpleDateFormat sdf_Date = new SimpleDateFormat(PATTERN_Date);
+	private static final SimpleDateFormat sdf_DateTime = new SimpleDateFormat(PATTERN_DATE_TIME);
+	private static final SimpleDateFormat sdf_Date = new SimpleDateFormat(PATTERN_DATE);
 	
 	private DateUtil() {}
 	/**

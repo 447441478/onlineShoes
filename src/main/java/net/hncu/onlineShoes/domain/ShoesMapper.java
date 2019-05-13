@@ -61,5 +61,5 @@ public interface ShoesMapper {
     		@Param("st")String startTime, @Param("et")String endTime,
     		@Param("userId")Integer userId);
     
-   
+    List<Shoes> select4HotProduct();
 }

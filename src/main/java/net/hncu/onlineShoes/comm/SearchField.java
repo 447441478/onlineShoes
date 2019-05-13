@@ -88,4 +88,26 @@ public class SearchField {
 				" LEFT JOIN shoes s ON si.shoes_id = s.shoes_id " ;
 		
 	}
+	
+	public static class UserDef{
+		public static final String USER_ID = "user_id";
+		public static final String USERNAME = "username";
+		public static final String EMAIL = "email";
+		public static final String CREATE_TIME = "create_time";
+		public static final String FLAG = "flag";
+		
+		public static String getOrderByField(String field, boolean isDesc) {
+			if(field == null) {
+				return USER_ID;
+			}
+			switch(field) {
+				case USERNAME:
+				case EMAIL:
+				case CREATE_TIME:
+				case FLAG:
+					return field + (isDesc ? " desc " : "");
+			}
+			return USER_ID;
+		}
+	}
 }

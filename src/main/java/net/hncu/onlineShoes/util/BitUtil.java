@@ -12,6 +12,16 @@ public class BitUtil {
 		return (value & flag) == flag;
 	}
 	/**
+	 * 判断 flag 是否置起
+	 * @param value
+	 * @param flag
+	 * @return
+	 */
+	public static boolean hasBit(Integer value, int flag) {
+		if(value == null) return false;
+		return (value & flag) == flag;
+	}
+	/**
 	 * 置起 flag 位
 	 * @param value
 	 * @param flag

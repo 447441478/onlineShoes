@@ -70,98 +70,17 @@
 		el:"#hotProduct",
 		data:function(){
 			return {
-				products:[
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99,
-						discountPrice:120,
-						useDiscount:true,
-						priceStyle:"discounPrice"
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99,
-						discountPrice:120
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99,
-						discountPrice:120
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99,
-						discountPrice:120
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99,
-						discountPrice:120
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99,
-						discountPrice:120
-					},
-				],
+				products:${hotProduct},
 				useDiscount:true,
 			};
 		},
 	});
+	
 	new Vue({
 		el:"#newProduct",
 		data:function(){
 			return {
-				products:[
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99
-					},
-					{
-						imgUrl:"img/product/pic.jpg",
-						jumpUrl:"#",
-						name:"新百伦新百伦新百伦新百伦新百伦新百伦新百伦新百伦",
-						price:199.99
-					},
-				]
+				products:${newProduct}
 			};
 		},
 	});

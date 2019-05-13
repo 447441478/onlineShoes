@@ -29,7 +29,9 @@ import net.hncu.onlineShoes.domain.UserExample;
 import net.hncu.onlineShoes.domain.UserExample.Criteria;
 import net.hncu.onlineShoes.domain.UserMapper;
 import net.hncu.onlineShoes.user.service.UserService;
+import net.hncu.onlineShoes.util.BitUtil;
 import net.hncu.onlineShoes.util.CheckCodeGenerator;
+import net.hncu.onlineShoes.util.EmailUtil;
 import net.hncu.onlineShoes.util.Msg;
 
 @RequestMapping("/user")
@@ -63,6 +65,8 @@ public class UserController {
 			List<User> selectByExample = userMapper.selectByExample(userExample);
 			if(selectByExample == null || selectByExample.isEmpty()) {
 				return Msg.success();
+			}else {
+				return Msg.fail().setInfo("alreadyExist");
 			}
 		} 
 		return Msg.fail();
@@ -121,12 +125,18 @@ public class UserController {
 			}
 		}
 		UserExample userExample = new UserExample();
-		userExample.createCriteria().andUsernameEqualTo(user.getUsername()).andPasswordEqualTo(user.getPassword());
+		userExample.createCriteria()
+			.andUsernameEqualTo(user.getUsername())
+			.andPasswordEqualTo(user.getPassword());
 		List<User> users = userMapper.selectByExample(userExample);
 		if(users.size() > 0 ) {
+			user = users.get(0);
 			session.setAttribute("errorLoginNum", 0); //清空错误次数
-			session.setAttribute("user", users.get(0));
-			return Msg.success();
+			if(BitUtil.hasBit(user.getFlag(), User.Flag.FREEZE)) {
+				return Msg.fail().setInfo("用户已被冻结");
+			}
+			session.setAttribute("user", user);
+			return Msg.success().setInfo("登录成功");
 		}
 		
 		errorLoginNum++;
@@ -140,7 +150,6 @@ public class UserController {
 		session.removeAttribute("user");
 		return Msg.success().setInfo("您已安全退出");
 	}
-	
 	public static boolean checkUsername(String username) {
 		if(username == null) 
 			return false;
@@ -203,6 +212,7 @@ public class UserController {
 		User user2 = new User();
 		user2.setUserId(user.getUserId());
 		user2.setEmail(email);
+		user2.setFlag(user.getFlag());
 		if(!"".equals(oldPwd)) {
 			if(!checkPassword(oldPwd)) {
 				return Msg.fail().setInfo("旧密码格式错误");
@@ -250,5 +260,94 @@ public class UserController {
 		return Msg.success();
 	}
 	
+	@RequestMapping(path="/forgetPwd",method=RequestMethod.GET)
+	public String forgetPwd() {
+		return ROOT+"forgetPwd";
+	}
 	
+	@ResponseBody
+	@RequestMapping(path="/getEmailCode",method=RequestMethod.GET)
+	public Msg getEmailCode(@RequestParam(name="username", required=true)String username,
+			HttpSession session) {
+		EmailCode oEmailCode = (EmailCode) session.getAttribute("emailCode");
+		if(oEmailCode == null) {
+			oEmailCode = new EmailCode();
+		} 
+		String emailCode = oEmailCode.getEmailCode();
+		if(emailCode == null) {
+			int code = (int)(Math.random() * 1000000);
+			emailCode = String.format("%06d", code);
+			oEmailCode.setEmailCode(emailCode);
+		}
+		User user = null;
+		UserExample example = new UserExample();
+		example.createCriteria().andUsernameEqualTo(username);
+		List<User> users = userMapper.selectByExample(example);
+		if(users.size() != 1) {
+			return Msg.fail();
+		}
+		user = users.get(0);
+		
+		boolean sendEmail = true;
+		long time = oEmailCode.getTime();
+		if(System.currentTimeMillis() - time > 5*60*1000) {
+			sendEmail = EmailUtil.sendEmail(user, emailCode);
+		}
+		if(sendEmail) {
+			oEmailCode.setTime(new Date().getTime());
+			session.setAttribute("emailCode", oEmailCode);
+			return Msg.success();
+		}
+		return Msg.fail();
+	}
+	@ResponseBody
+	@RequestMapping(path="/findBack",method=RequestMethod.POST)
+	public Msg findBack(@RequestParam(name="username", required=true)String username,
+			@RequestParam(name="password", required=true)String password,
+			@RequestParam(name="emailCode", required=true)String emailCode,
+			HttpSession session) {
+		EmailCode oEmailCode = (EmailCode) session.getAttribute("emailCode");
+		if(oEmailCode == null) {
+			return Msg.fail().setInfo("验证码错误,请重新输入");
+		} 
+		long time = oEmailCode.getTime();
+		if(System.currentTimeMillis() - time > 5*60*1000) {
+			session.setAttribute("emailCode", null);
+			return Msg.fail().setInfo("验证码已失效,请重新获取");
+		}
+		String emailCode2 = oEmailCode.getEmailCode();
+		if(!emailCode.equals(emailCode2)) {
+			return Msg.fail().setInfo("验证码错误,请重新输入");
+		}
+		UserExample example = new UserExample();
+		example.createCriteria().andUsernameEqualTo(username);
+		User user = new User();
+		user.setPassword(password);
+		int i = userMapper.updateByExampleSelective(user, example);
+		if(i == 1) {
+			session.setAttribute("emailCode", null);
+			return Msg.success();
+		}
+		return Msg.fail();
+	}
+	
+	private class EmailCode{
+		private String emailCode ;
+		private long time;
+		public EmailCode() {
+			super();
+		}
+		public String getEmailCode() {
+			return emailCode;
+		}
+		public void setEmailCode(String emailCode) {
+			this.emailCode = emailCode;
+		}
+		public long getTime() {
+			return time;
+		}
+		public void setTime(long time) {
+			this.time = time;
+		}
+	}
 }

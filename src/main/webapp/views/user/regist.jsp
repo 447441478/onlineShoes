@@ -164,7 +164,7 @@ a:hover{
 	</div>
 </body>
 <script type="text/javascript">
-var regist = new Vue({
+var v_regist = new Vue({
 	el:"#regist",
 	data:function(){
 		return{

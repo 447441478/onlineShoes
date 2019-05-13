@@ -3,6 +3,7 @@ package net.hncu.onlineShoes.domain;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface OrderDetailMapper {
     long countByExample(OrderDetailExample example);
@@ -30,4 +31,8 @@ public interface OrderDetailMapper {
     int updateByPrimaryKeySelective(OrderDetail record);
 
     int updateByPrimaryKey(OrderDetail record);
+    @Select("<script>" +
+	    	   	"select DISTINCT shoes_id from orderdetail" +
+			"</script>")
+    List<Integer> getShoesIds();
 }

@@ -158,6 +158,15 @@
     from shoes
     where shoes_id = #{shoesId,jdbcType=INTEGER}
   </select>
+   <select id="select4HotProduct" resultMap="BaseResultMap">
+    select
+    *
+    from (select * from shoes s1 where s1.shoes_id in (
+	SELECT shoes_id FROM orderdetail GROUP BY shoes_id ORDER BY count(shoes_id) desc
+	)
+	UNION select * from shoes) as aa where aa.stock_out = 0 LIMIT 8;
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from shoes
     where shoes_id = #{shoesId,jdbcType=INTEGER}

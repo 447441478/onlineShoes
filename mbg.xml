@@ -40,9 +40,9 @@
 		<!-- <table tableName="orderdetail" domainObjectName="OrderDetail"></table> -->
 		<!-- <table tableName="shoesItem" domainObjectName="ShoesItem"></table> -->
 		<!-- <table tableName="comment" domainObjectName="Comment"></table> -->
-		
-		<!-- <table tableName="shoestype" domainObjectName="ShoesType"></table> -->
 		<!-- <table tableName="address" domainObjectName="Address"></table> -->
+		<!-- <table tableName="home_prop" domainObjectName="HomeProp"></table> -->
+		
 
 	</context>
 </generatorConfiguration>

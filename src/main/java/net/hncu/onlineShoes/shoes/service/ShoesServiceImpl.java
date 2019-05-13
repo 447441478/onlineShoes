@@ -161,9 +161,18 @@ public class ShoesServiceImpl implements ShoesService{
 		}
 		PageHelper.startPage(currentPage, pageSize);
 		ShoesExample shoesExample = new ShoesExample();
-		shoesExample.createCriteria().andNameLike(keyWord);
-		List<Shoes> shoesListByBrandId = shoesMapper.selectByExample(shoesExample);
-		return new PageInfo<Shoes>(shoesListByBrandId);
+		shoesExample.createCriteria()
+			.andNameLike(keyWord)
+			.andStockOutEqualTo(Shoes.StockOut.UP);
+		List<Shoes> Shoess = shoesMapper.selectByExample(shoesExample);
+		return new PageInfo<Shoes>(Shoess);
+	}
+
+	@Override
+	public List<Shoes> getHotProduct() {
+		
+		
+		return null;
 	}
 	
 }

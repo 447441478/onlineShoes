@@ -171,6 +171,7 @@
 			<div class="col-md-12 tabBar">
 				<span class="tab">产品评论</span>
 			</div>
+		<template v-if='showComment'>
 			<div class="col-md-12" v-for="item in comments" style="background: #f5f5f5;padding-bottom: 8px;padding-top:6px;border-bottom: 1px solid #eee;">
 				<span style="width: 70px;text-align: left;display: inline-block;">
 					<i class="glyphicon glyphicon-user" style="color: #f00;"></i>
@@ -178,6 +179,10 @@
 				</span>
 				<span style="color: #828282;">{{new Date(item.createTime).toLocaleString()}}</span>
 				<pre style="color: #555;border: none;">{{item.content}}</pre>
+			</div>
+		</template>
+			<div class="col-md-12" v-else='!showComment' style="background: #f5f5f5;padding-bottom: 8px;padding-top:6px;border-bottom: 1px solid #eee;">
+				目前还没有人评论哟。
 			</div>
 			<template v-if='canComment'>
 				<div class="col-md-8 col-md-offset-2" style="text-align: center;margin-top: 20px;">
@@ -199,7 +204,6 @@
 	var shoes = ${shoesJson};
 	shoes.checkedIndex = -1;
 	$(shoes.shoesSizes).each(function(index){
-		console.log(checkShoesSize);
 		if(checkShoesSize == this.size){
 			shoes.checkedIndex = index;
 		}
@@ -301,6 +305,11 @@
 				canComment: canComment,
 				comments: comments,
 				content: '',
+			}
+		},
+		computed:{
+			showComment: function(){
+				return !!comments && comments.length > 0;
 			}
 		},
 		methods:{

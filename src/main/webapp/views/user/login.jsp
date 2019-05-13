@@ -161,7 +161,7 @@ a:hover{
 				        <label>
 				          <input type="checkbox" v-model="autoLogin">两周内自动登录
 				        </label>
-				        <a class="forgetPwd" href="javascript:;">忘记密码？</a>
+				        <a class="forgetPwd" href="forgetPwd">忘记密码？</a>
 				      </div>
 				      
 				</div>

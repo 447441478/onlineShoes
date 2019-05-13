@@ -28,14 +28,14 @@
 }
 </style>
 </head>
-<body style="background-color: #fff;background-image: none;">
+<body style="background-color: #f5f5f5;background-image: none;">
 	<!-- 整个页面容器 -->
 	<div class="container">
 		<!-- 顶部 -->
 		<jsp:include page="/inc/header_inc.jsp" />
 		<br/>
 		<div id="car" class="row" >
-			<div class="col-md-10 col-md-offset-1" style="border: 2px solid #f0f0f0;">
+			<div class="col-md-10 col-md-offset-1" style="border: 2px solid #f0f0f0; background-color: #fff; ">
 				<div class="col-md-12" style="font-size: 20px; border-bottom: 2px solid #f0f0f0;">
 					<span style="display: inline-block; padding: 8 5px;">我的购物车</span>
 				</div>
