@@ -66,7 +66,7 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 		if(uri == null) 
 			return false;
 		for (String str: noLoginBanUri) {
-			if(uri.indexOf(str) > 0) {
+			if(uri.indexOf(str) >= 0) {
 				return false;
 			}
 		}
