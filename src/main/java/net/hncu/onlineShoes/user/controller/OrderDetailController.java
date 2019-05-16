@@ -45,6 +45,7 @@ public class OrderDetailController {
 		OrderDetailExample example = new OrderDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andUserIdEqualTo(user.getUserId());
+		example.setOrderByClause("od.order_detail_id desc");
 		List<OrderDetail> orderDetails = orderDetailMapper.selectByExampleWithShoes(example);
 		ObjectMapper om = new ObjectMapper();
 		model.addAttribute("orderDetails", om.writeValueAsString(orderDetails));

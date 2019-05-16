@@ -97,7 +97,7 @@ $.fn.datebox.defaults.parser = function(s){
 					<thead>
 						<tr>
 							<th width="40px;"><input style="cursor: pointer;" class="cbxAll" type="checkbox" @click.stop="checkChangeAll()"/></th>
-							<th style="width: 200px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.NAME %>')">
+							<th style="width: 300px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.NAME %>')">
 								产品名称
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
@@ -133,7 +133,7 @@ $.fn.datebox.defaults.parser = function(s){
 					<tbody>
 						<tr v-for="(shoes,index) in shoess" @click="check(index)">
 							<td class="cbx"><input :id="'s-'+shoes.id" style="cursor: pointer;" :class="['cbx-'+index]" type="checkbox"  @click.stop="checkChange()"/></td>
-							<td>{{shoes.name}}</td>
+							<td><a style="cursor: pointer;" @click="openShoes(shoes.id)">{{shoes.name}}</a></td>
 							<td>{{shoes.brandName}}</td>
 							<td>{{shoes.onlineTime}}</td>
 							<td>{{shoes.salePrice.toFixed(2)}}</td>
@@ -193,6 +193,9 @@ $.fn.datebox.defaults.parser = function(s){
 			}
 		},
 		methods:{
+			openShoes: function(shoesId){
+				window.open("${APP_DIR}/shoes/"+shoesId);;
+			},
 			checkChange:function(){
 				$cbxs = $("#shoesTable .cbx input");
 				var len = $cbxs.length;

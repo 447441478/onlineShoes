@@ -10,6 +10,11 @@ public class Shoes {
 		public static final String DOWN = "1";  //下架
 	}
 	
+	public static class Flag{
+		public static final Integer INIT = 0;  		 //默认
+		public static final Integer DELETE = 0x1;    //删除
+	}
+	
     private Integer shoesId;
 
     private Integer userId;
@@ -31,6 +36,9 @@ public class Shoes {
     private String stockOut;
 
     private String name;
+    
+    private Integer flag;
+    
     //一对多
     private List<ShoesSize> shoesSizes = new ArrayList<ShoesSize>();
     //多对一
@@ -138,5 +146,13 @@ public class Shoes {
 
 	public void setBrand(Brand brand) {
 		this.brand = brand;
+	}
+
+	public Integer getFlag() {
+		return flag;
+	}
+
+	public void setFlag(Integer flag) {
+		this.flag = flag;
 	}
 }

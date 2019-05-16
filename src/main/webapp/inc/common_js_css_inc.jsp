@@ -5,27 +5,27 @@
 %>
 <!-- 引入jquery -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/jquery-3.1.0.js"></script>
+	src="${APP_DIR}/js/jquery-3.1.0.js"></script>
 <!-- 引入jquery.cookie -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/jquery.cookie.js"></script>
+	src="${APP_DIR}/js/jquery.cookie.js"></script>
 <!-- 引入 jQueryUI -->
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/jquery-ui-1.12.1.custom/jquery-ui.min.css" />
-<script type="text/javascript" src="${pageContext.request.contextPath}/jquery-ui-1.12.1.custom/jquery-ui.min.js" ></script>
+	href="${APP_DIR}/jquery-ui-1.12.1.custom/jquery-ui.min.css" />
+<script type="text/javascript" src="${APP_DIR}/jquery-ui-1.12.1.custom/jquery-ui.min.js" ></script>
 <!-- 引入Bootstrap -->
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/bootstrap-3.3.7-dist/css/bootstrap.css" />
+	href="${APP_DIR}/bootstrap-3.3.7-dist/css/bootstrap.css" />
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+	src="${APP_DIR}/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <!-- 引入vue -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/vue.js"></script>
+	src="${APP_DIR}/js/vue.js"></script>
 <!-- 引入自定义共用组件样式-->
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/css/myComponent.css"/>
+	href="${APP_DIR}/css/myComponent.css"/>
 <!-- 引入自定义共用组件 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/vueComponent/myComponent.js" ></script>
+<script type="text/javascript" src="${APP_DIR}/js/vueComponent/myComponent.js" ></script>
 <style type="text/css">
 *{
 	font-family: 'Microsoft Yahei';

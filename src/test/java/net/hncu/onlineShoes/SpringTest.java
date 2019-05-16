@@ -132,4 +132,9 @@ public class SpringTest {
 		System.out.println(Arrays.toString(select4ShoppingCar.toArray()));
 	}
 	
+	@Test
+	public void test111() {
+		shoesMapper.updateFlagByShoesIds(new ArrayList<Integer>(), 1, null);
+	}
+	
 }

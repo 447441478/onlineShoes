@@ -13,6 +13,7 @@
     <result column="ratio" jdbcType="DECIMAL" property="ratio" />
     <result column="stock_out" jdbcType="VARCHAR" property="stockOut" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
   </resultMap>
   <resultMap id="withBrandAndShoesSizeResultMap" type="net.hncu.onlineShoes.domain.Shoes">
     <id column="shoes_id" jdbcType="INTEGER" property="shoesId" />
@@ -26,6 +27,7 @@
     <result column="ratio" jdbcType="DECIMAL" property="ratio" />
     <result column="stock_out" jdbcType="VARCHAR" property="stockOut" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
     <association property="brand" javaType="net.hncu.onlineShoes.domain.Brand">
     	<id column="brandId" property="brandid"/>
     	<result column="brandName" property="name"/>
@@ -66,6 +68,7 @@
                 </when>
               </choose>
             </foreach>
+            and flag &amp; 1 != 1
           </trim>
         </if>
       </foreach>
@@ -105,11 +108,11 @@
   </sql>
   <sql id="Base_Column_List">
     shoes_id, user_id, brand_id, img_uuid, img_suffix, online_time, in_price, out_price, 
-    ratio, stock_out, name
+    ratio, stock_out, name, flag
   </sql>
   <sql id="withShoesSizeAndBrand_Column_List">
   	s.shoes_id, s.user_id, s.brand_id, s.img_uuid, s.img_suffix, s.online_time, s.in_price, s.out_price, 
-    s.ratio, s.stock_out, s.name, b.brandId, b.name as brandName, b.description, ss.shoes_size_id, ss.value, ss.amount
+    s.ratio, s.stock_out, s.name, s.flag, b.brandId, b.name as brandName, b.description, ss.shoes_size_id, ss.value, ss.amount
   </sql>
   <sql id="Shoes_Brand_ShoesSize">
   	shoes s LEFT JOIN brand b ON s.brand_id = b.brandId
@@ -150,13 +153,13 @@
     select 
     <include refid="withShoesSizeAndBrand_Column_List" />
     from  <include refid="Shoes_Brand_ShoesSize" />
-    where s.shoes_id = #{shoesId,jdbcType=INTEGER}
+    where s.shoes_id = #{shoesId,jdbcType=INTEGER} and s.flag &amp; 1 != 1
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from shoes
-    where shoes_id = #{shoesId,jdbcType=INTEGER}
+    where shoes_id = #{shoesId,jdbcType=INTEGER} and s.flag &amp; 1 != 1
   </select>
    <select id="select4HotProduct" resultMap="BaseResultMap">
     select
@@ -164,7 +167,7 @@
     from (select * from shoes s1 where s1.shoes_id in (
 	SELECT shoes_id FROM orderdetail GROUP BY shoes_id ORDER BY count(shoes_id) desc
 	)
-	UNION select * from shoes) as aa where aa.stock_out = 0 LIMIT 8;
+	UNION select * from shoes) as aa where aa.stock_out = 0 and aa.flag &amp; 1 != 1 LIMIT 8;
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -186,11 +189,11 @@
     insert into shoes (user_id, brand_id, 
       img_uuid, img_suffix, online_time, 
       in_price, out_price, ratio, 
-      stock_out, name)
-    values (#{userId,jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER}, 
+      stock_out, name, flag)
+    values (#{userId, jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER}, 
       #{imgUuid,jdbcType=VARCHAR}, #{imgSuffix,jdbcType=VARCHAR}, #{onlineTime,jdbcType=VARCHAR}, 
       #{inPrice,jdbcType=DECIMAL}, #{outPrice,jdbcType=DECIMAL}, #{ratio,jdbcType=DECIMAL}, 
-      #{stockOut,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+      #{stockOut,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{flag,jdbcType=INTEGER})
   </insert>
   <!-- 返回自动增长id -->
   <insert id="insertSelective" parameterType="net.hncu.onlineShoes.domain.Shoes">
@@ -232,6 +235,9 @@
       <if test="name != null">
         name,
       </if>
+      <if test="flag != null">
+        flag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="shoesId != null">
@@ -266,6 +272,9 @@
       </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null">
+        #{flag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -311,6 +320,9 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
       </if>
+      <if test="record.flag != null">
+        name = #{record.flag,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -328,7 +340,8 @@
       out_price = #{record.outPrice,jdbcType=DECIMAL},
       ratio = #{record.ratio,jdbcType=DECIMAL},
       stock_out = #{record.stockOut,jdbcType=VARCHAR},
-      name = #{record.name,jdbcType=VARCHAR}
+      name = #{record.name,jdbcType=VARCHAR}, 
+      flag = #{record.flag,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -366,6 +379,9 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="flag != null">
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
     </set>
     where shoes_id = #{shoesId,jdbcType=INTEGER}
   </update>
@@ -380,7 +396,8 @@
       out_price = #{outPrice,jdbcType=DECIMAL},
       ratio = #{ratio,jdbcType=DECIMAL},
       stock_out = #{stockOut,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR}
+      name = #{name,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=INTEGER},
     where shoes_id = #{shoesId,jdbcType=INTEGER}
   </update>
 </mapper>

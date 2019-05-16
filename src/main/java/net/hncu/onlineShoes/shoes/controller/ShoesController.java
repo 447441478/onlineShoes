@@ -145,6 +145,9 @@ public class ShoesController {
 			@RequestParam(name="orderDetailId",defaultValue="-1") Integer orderDetailId,
 			Model model) throws JsonProcessingException {
 		Shoes shoes = shoesService.getShoesById(id);
+		if(shoes == null || shoes.getShoesId() == null) {
+			return "redirect:/";
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		model.addAttribute("shoes", shoes);
 		model.addAttribute("shoesJson", mapper.writeValueAsString(shoes));

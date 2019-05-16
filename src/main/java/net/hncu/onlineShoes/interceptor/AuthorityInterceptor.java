@@ -37,7 +37,7 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 			canIn = false;
 		}
 		
-		if(uri.indexOf("/adm") > 0 && !canInAdm(user)) { //进行adm路径权限认证
+		if(uri.indexOf("/adm") >= 0 && !canInAdm(user)) { //进行adm路径权限认证
 			canIn = false;
 		}
 		if(!canIn) {
@@ -45,7 +45,7 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 			if(referer != null && !referer.isEmpty() && !referer.endsWith(uri)) {
 				response.sendRedirect(referer);
 			}else {
-				response.sendRedirect(request.getContextPath());
+				response.sendRedirect(request.getContextPath()+"/");
 			}
 		}
 		return canIn;

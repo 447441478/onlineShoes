@@ -7,7 +7,7 @@ import com.mchange.util.AssertException;
 /**
  * 该工具需要配合 tomcat/conf/Servlet.xml 文件<br/>
  * 在项目主机即<host>标签内配置一个虚拟路径，用来存放上传的文件，如 ：<br/>
- * &ltContext docBase="product" path="/onlineShoes/product" reloadable="true"/&gt
+ * &ltContext docBase="product" path="/product" reloadable="true"/&gt
  * @author 宋进宇
  */
 public class FileUtil {

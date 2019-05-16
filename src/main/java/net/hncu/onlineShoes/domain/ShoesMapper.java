@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import net.hncu.onlineShoes.comm.SearchField.ShoesDef;
 
@@ -54,6 +55,7 @@ public interface ShoesMapper {
     		+	"<if test='userId != null and userId != 0'>"
     		+	" and s.user_id = #{userId} "
     		+	"</if>"
+    		+	" and s.flag &amp; 1 != 1 "
     		+	" order by ${orderByClause} "
     		+"</script>")
     List<Map<String, Object>> select4Manage(@Param("orderByClause") String orderByClause, 
@@ -62,4 +64,24 @@ public interface ShoesMapper {
     		@Param("userId")Integer userId);
     
     List<Shoes> select4HotProduct();
+    @Update("<script>"
+    		+	"update shoes "
+    		+	"<set>"
+    		+		"<if test='flag != null'>"
+    		+ 			" flag = " 
+    		+			"<if test='isOr != null'>"
+    		+   			"<if test='isOr'> flag | </if>" 
+    		+   			"<if test='!isOr'> flag &amp; </if>" 
+    		+			"</if>"
+    		+			" #{flag}"
+    		+		"</if>"
+    		+	"</set>"
+    		+	" where 1=1 "
+			+	"<if test='shoesIds != null'>"
+			+		"<foreach close=')' open='and shoes_id in (' separator=',' collection='shoesIds' item='listItem'>"
+			+		"#{listItem}"
+			+		"</foreach>"
+			+	"</if>"
+    		+"</script>")
+    int updateFlagByShoesIds(@Param("shoesIds")List<Integer> shoesIds, @Param("flag")Integer flag, @Param("isOr")Boolean or);
 }

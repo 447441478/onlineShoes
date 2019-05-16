@@ -93,4 +93,23 @@ public class memberController {
 				.add("startTime", startTime)
 				.add("endTime", endTime);
 	}
+	@RequestMapping(path="/update",method=RequestMethod.GET)
+	public String updateIndex(@RequestParam(name="userId",required=true)Integer userId, Model model) throws JsonProcessingException {
+		User user = userMapper.selectByPrimaryKey(userId);
+		ObjectMapper om = new ObjectMapper();
+		model.addAttribute("member", om.writeValueAsString(user));
+		return ROOT + "updateMember";
+	}
+	@ResponseBody
+	@RequestMapping(path="/update",method=RequestMethod.POST)
+	public Msg update(@RequestParam(name="userId",required=true)Integer userId,
+			@RequestParam(name="email",required=true)String email,
+			@RequestParam(name="flag",required=true)Integer flag) throws JsonProcessingException {
+		User user = new User();
+		user.setUserId(userId);
+		user.setEmail(email);
+		user.setFlag(flag);
+		userMapper.updateByPrimaryKeySelective(user);
+		return Msg.success();
+	}
 }

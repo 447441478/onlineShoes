@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ import net.hncu.onlineShoes.util.Msg;
 
 @Service("shoesService")
 public class ShoesServiceImpl implements ShoesService{
-
+	Logger log = Logger.getLogger(ShoesServiceImpl.class);
+	
 	@Autowired
 	private ShoesDAO shoesDao;
 	
@@ -115,17 +117,10 @@ public class ShoesServiceImpl implements ShoesService{
 
 	@Override
 	public String deleteShoes(Integer[] shoesIds) {
-		if(shoesIds == null) 
+		if(shoesIds == null || shoesIds.length == 0) 
 			return "shoesId不能为空";
-		//先删除所有鞋码
-		ShoesSizeExample example = new ShoesSizeExample();
-		example.createCriteria().andShoesIdIn(Arrays.asList(shoesIds));
-		shoesSizeMapper.deleteByExample(example);
-		//再删除鞋子相关信息
-		ShoesExample shoesExample = new ShoesExample();
-		shoesExample.createCriteria().andShoesIdIn(Arrays.asList(shoesIds));
-		shoesMapper.deleteByExample(shoesExample);
-		
+		int i = shoesMapper.updateFlagByShoesIds(Arrays.asList(shoesIds), Shoes.Flag.DELETE, true);
+		log.info("deleteShoes  i="+i);
 		return "删除成功";
 	}
 

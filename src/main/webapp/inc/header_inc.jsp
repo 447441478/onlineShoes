@@ -28,7 +28,7 @@
 	<div class="col-md-3 col-md-offset-3 item" >
 		<div class="input-group mySearch">
 		  <input @keyup.enter="search()" v-model="keyWord" type="text" class="form-control" placeholder="搜索内容" aria-describedby="sizing-addon2">
-		  <span @click.stop="search()" class="input-group-addon" id="sizing-addon2" style="height: 34.5px;" >
+		  <span @click.stop="search()" class="input-group-addon" id="sizing-addon2" >
 		  	<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 		  </span>
 		</div>
@@ -109,7 +109,7 @@
 		methods:{
 			getProductList:function(brandid){
 				if(brandid == 0){
-					location.href = "${APP_DIR}";
+					location.href = "${APP_DIR}/";
 					return;
 				}
 				location.href="${APP_DIR}/brand/"+brandid;

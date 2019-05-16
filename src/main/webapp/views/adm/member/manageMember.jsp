@@ -36,9 +36,12 @@ table tr th,td {
 .glyphicon-remove{
 	color:red;
 }
-.options{margin: 10px 0;}
-.options button{
-	margin-left: 10px;
+.searchs{margin: 10px 0;}
+.glyphicon-edit{
+	cursor: pointer;
+}
+.glyphicon-edit:hover{
+	color:#5874d8;
 }
 
 </style>
@@ -73,10 +76,6 @@ $.fn.datebox.defaults.parser = function(s){
 			    <a href="#" class="close" @click.stop="tip=''" style="margin-left: 8px;">&times;</a>
 			    <span>{{tip}}</span>
 			</div>
-			<div class="options col-md-12">
-				<button @click.stop="add()" type="button" class="btn btn-info btn-sm">添加</button>
-				<button @click.stop="update()" type="button" class="btn btn-warning btn-sm">修改</button>
-			</div>
 			<div class="searchs col-md-12">
 				<form class="form-inline">
 					<div class="form-group">
@@ -98,7 +97,7 @@ $.fn.datebox.defaults.parser = function(s){
 				<table class="table table-striped" style="margin-bottom: 0;font-size: 13px;font-family: 微软雅黑;table-layout: fixed;">
 					<thead>
 						<tr>
-							<th width="40px;"></th>
+							<th width="80px;">操作</th>
 							<th style="width: 200px;cursor: pointer;" @click="changeOrder('<%=SearchField.UserDef.USERNAME %>')">
 								账号
 								<i v-if="orderColum == '<%=SearchField.UserDef.USERNAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
@@ -122,8 +121,9 @@ $.fn.datebox.defaults.parser = function(s){
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(user,index) in users" @click="check(index)">
-							<td class="cbx"><input :id="'s-'+user.userId" style="cursor: pointer;" :class="['cbx-'+index]" type="checkbox"  /></td>
+						<tr v-for="(user,index) in users" >
+							<td class="cbx">
+								<span class="glyphicon glyphicon-edit" @click="update(user.userId)">修改</span>
 							<td>{{user.username}}</td>
 							<td>{{user.email}}</td>
 							<td>{{user.createTime}}</td>
@@ -134,6 +134,19 @@ $.fn.datebox.defaults.parser = function(s){
 				<div v-if='pageInfo.total == 0'>很抱歉,没有找到符合的数据。</div>
 				<products-pagination :page-info="pageInfo"></products-pagination>
 			</div>
+<!-- 模式对话框 -->
+<div class="modal fade" id="myModal" style="overflow:hidden;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="dialog" style="width: 450px;height: 350px;">
+		<div class="modal-content">
+			<span style="position: relative;right: 20px;top: 20px;z-index: 100;" type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				&times;
+			</span>
+			<div class="modal-body" style="padding: 0px;">
+				<iframe src="" style="width: 100%;height: 100%;position: fixed;" frameborder=0 scrolling="yes"></iframe>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>	
 		</div>
 	</div>
 </body>
@@ -162,6 +175,11 @@ var v_homeSetting = new Vue({
 		}
 	},
 	methods:{
+		update: function(userId){
+			$("#myModal .modal-dialog").css({width:"600px",height:"450px"});
+			$("#myModal iframe").attr("src","update?userId="+userId);
+			$('#myModal').modal("show");
+		},
 		getAuthority: function(flag){
 			if((flag & <%=User.Flag.FREEZE%>) == <%=User.Flag.FREEZE%>){
 				return "已被冻结";
