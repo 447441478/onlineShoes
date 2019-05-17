@@ -57,7 +57,7 @@
 .tab{
 	cursor: pointer;
 	display: inline-block;
-	width: 160px;
+	width: 120px;
 	text-align: center;
 }
 .tab.active{
@@ -72,7 +72,7 @@
 		<!-- 顶部 -->
 		<jsp:include page="/inc/header_inc.jsp" />
 		<div class="row">
-			<div id="orderDetails" class="col-md-10 col-md-offset-1">
+			<div id="orderDetails" class="col-md-12">
 				<div class="col-md-12 tabBar" >
 					<span class="tab" @click='checkTabIndex = index' v-for="(tab, index) in tabs" :class="index == checkTabIndex ? 'active' : ''">
 					{{tab.txt}}
@@ -150,8 +150,24 @@
 			flag:<%=OrderDetail.Flag.DELIVERED%>,
 		},
 		{	
+			txt:"已签收",
+			flag:<%=OrderDetail.Flag.ACCEPTED%>,
+		},
+		{	
 			txt:"交易完成",
 			flag:<%=OrderDetail.Flag.COMPLETE_TRANSACTION%>,
+		},
+		{	
+			txt:"退款中",
+			flag:<%=OrderDetail.Flag.APPLY_REFUND%>,
+		},
+		{	
+			txt:"已退款",
+			flag:<%=OrderDetail.Flag.COMPLETE_REFUND%>,
+		},
+		{	
+			txt:"已评价",
+			flag:<%=OrderDetail.Flag.EVALUATED%>,
 		},
 	];
 	nav.isShow = false;
@@ -222,7 +238,8 @@
 				this.changeOrderState(item,<%=OrderDetail.Flag.APPLY_REFUND%>);
 			},
 			reminedDelever:function(item){
-				this.changeOrderState(item,<%=OrderDetail.Flag.DELIVERED%>);
+				//this.changeOrderState(item,<%=OrderDetail.Flag.DELIVERED%>);
+				alert("亲！已经提醒店家了，请等候店家处理哟。");
 			},
 			confirmReceipt:function(item){
 				this.changeOrderState(item,<%=OrderDetail.Flag.ACCEPTED%>);

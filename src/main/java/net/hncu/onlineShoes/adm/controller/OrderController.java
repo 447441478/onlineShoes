@@ -50,12 +50,13 @@ public class OrderController {
 	}
 	@RequestMapping(path="/get",method=RequestMethod.GET)
 	@ResponseBody
-	public Msg get(@RequestParam(defaultValue="1") Integer currentPage, 
-			@RequestParam(defaultValue="10") Integer pageSize, 
-			@RequestParam(defaultValue="-1") Integer payMethod, 
-			@RequestParam(defaultValue="") String keyWord,
-			@RequestParam(defaultValue="0") Long startTime,
-			@RequestParam(defaultValue="0") Long endTime,
+	public Msg get(@RequestParam(name="currentPage", defaultValue="1") Integer currentPage, 
+			@RequestParam(name="pageSize", defaultValue="10") Integer pageSize, 
+			@RequestParam(name="payMethod", defaultValue="-1") Integer payMethod, 
+			@RequestParam(name="keyWord", defaultValue="") String keyWord,
+			@RequestParam(name="startTime", defaultValue="0") Long startTime,
+			@RequestParam(name="endTime", defaultValue="0") Long endTime,
+			@RequestParam(name="flag", defaultValue="-1") Integer flag,
 			HttpSession session) {
 		User user = UserController.getUser(session);
 		if(user == null) {
@@ -84,6 +85,9 @@ public class OrderController {
 			}else {
 				criteria.andPaymethodEqualTo(OrderDetail.Paymethod.DEFAULT);
 			}
+		}
+		if(flag != -1) {
+			criteria.andFlagEqualTo(flag);
 		}
 		criteria.andCreateTimeBetween(DateUtil.stringConversionDateTime(st), DateUtil.stringConversionDateTime(et));
 		List<OrderDetail> orderDetails = orderDetailMapper.selectByExampleWithShoes(orderDetailExample);

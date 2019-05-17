@@ -55,6 +55,24 @@ label {
 .shoesName:hover{
 	color: #5874d8;
 }
+.tabBar{
+	font-size: 20px;
+	margin-bottom: 2px;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #eee;
+	background-color: #fff;
+}
+.tab{
+	cursor: pointer;
+	display: inline-block;
+	width: 120px;
+	text-align: center;
+}
+.tab.active{
+	box-sizing: border-box;
+	border-bottom: 2px solid #f00;
+}
 </style>
 </head>
 <%	
@@ -112,23 +130,28 @@ $.fn.datebox.defaults.parser = function(s){
 				</form>
 			</div>
 		<div class="col-md-12" style="background-color: #e9eaee;padding: 20px;">
+			<div class="col-md-12 tabBar" >
+				<span class="tab" @click='checkTabIndex = index' v-for="(tab, index) in tabs" :class="index == checkTabIndex ? 'active' : ''">
+				{{tab.txt}}
+				</span>
+			</div>
 			<div class="col-md-12 table-responsive" style="background-color: #f8f9fb; border-radius: 5px;">
 				<table class="table table-striped" style="margin-bottom: 0;font-size: 13px;font-family: 微软雅黑;table-layout: fixed;">
 					<thead>
 						<tr>
-							<th style="width: 200px;" @click="changeOrder('<%=SearchField.ShoesDef.NAME %>')">
+							<th style="width: 200px;" >
 								产品名称
 							</th>
-							<th style="width: 120px;" @click="changeOrder('<%=SearchField.ShoesDef.BRAND_NAME %>')">
+							<th style="width: 120px;">
 								单价/数量
 							</th>
-							<th style="width: 180px;" @click="changeOrder('<%=SearchField.ShoesDef.ONLINE_TIME %>')">
+							<th style="width: 180px;" >
 								买家
 							</th>
-							<th style="width: 120px;" @click="changeOrder('<%=SearchField.ShoesDef.SALE_PRICE %>')">
+							<th style="width: 120px;" >
 								实付金额
 							</th>
-							<th style="width: 120px;" @click="changeOrder('<%=SearchField.ShoesDef.STOCK %>')">
+							<th style="width: 120px;" >
 								订单状态
 							</th>
 						</tr>
@@ -201,6 +224,39 @@ $.fn.datebox.defaults.parser = function(s){
 </body>
 
 <script type="text/javascript">
+	var tabs = [
+		{
+			txt:"所有订单",
+			flag:-1,
+		},
+		{
+			txt:"待发货",
+			flag:<%=OrderDetail.Flag.INIT%>,
+		},
+		{	txt:"已发货",
+			flag:<%=OrderDetail.Flag.DELIVERED%>,
+		},
+		{	
+			txt:"已签收",
+			flag:<%=OrderDetail.Flag.ACCEPTED%>,
+		},
+		{	
+			txt:"交易完成",
+			flag:<%=OrderDetail.Flag.COMPLETE_TRANSACTION%>,
+		},
+		{	
+			txt:"退款中",
+			flag:<%=OrderDetail.Flag.APPLY_REFUND%>,
+		},
+		{	
+			txt:"已退款",
+			flag:<%=OrderDetail.Flag.COMPLETE_REFUND%>,
+		},
+		{	
+			txt:"已评价",
+			flag:<%=OrderDetail.Flag.EVALUATED%>,
+		},
+	];
 	var pageSize = 10;
 	var orderDetails = ${orderDetails == null ? "[]" : orderDetails};
 	var vm_orderDetails = new Vue({
@@ -214,6 +270,8 @@ $.fn.datebox.defaults.parser = function(s){
 					total:0,
 					pageSize:pageSize,
 				},
+				tabs: tabs,
+				checkTabIndex: 0,
 			}
 		},
 		methods:{
@@ -298,6 +356,7 @@ $.fn.datebox.defaults.parser = function(s){
 					payMethod:$("#payMethod").val(),
 					startTime:new Date($("#startTime").datebox("getValue")).getTime(),
 					endTime: new Date($("#endTime").datebox("getValue")).getTime(),
+					flag: this.tabs[this.checkTabIndex].flag,
 				};
 			},
 			refreshSearch:function(data){
@@ -336,6 +395,9 @@ $.fn.datebox.defaults.parser = function(s){
 					this.pageInfo.currentPage = parseInt((val+this.pageInfo.pageSize-1)/this.pageInfo.pageSize);
 				}
 			},
+			checkTabIndex : function(val){
+				this.refresh();
+			}
 		},
 		created:function(){
 			this.refresh();			

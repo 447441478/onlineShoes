@@ -97,32 +97,32 @@ $.fn.datebox.defaults.parser = function(s){
 					<thead>
 						<tr>
 							<th width="40px;"><input style="cursor: pointer;" class="cbxAll" type="checkbox" @click.stop="checkChangeAll()"/></th>
-							<th style="width: 300px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.NAME %>')">
+							<th style="width: 300px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.NAME %>')">
 								产品名称
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 120px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.BRAND_NAME %>')">
+							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.BRAND_NAME %>')">
 								产品品牌
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.BRAND_NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.BRAND_NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 180px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.ONLINE_TIME %>')">
+							<th style="width: 180px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.ONLINE_TIME %>')">
 								录入时间
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.ONLINE_TIME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.ONLINE_TIME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 120px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.SALE_PRICE %>')">
+							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.SALE_PRICE %>')">
 								售价
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.SALE_PRICE %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.SALE_PRICE %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 120px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.STOCK %>')">
+							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.STOCK %>')">
 								库存
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 80px;cursor: pointer;" @click="changeOrder('<%=SearchField.ShoesDef.STOCK_OUT %>')">
+							<th style="width: 80px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.STOCK_OUT %>')">
 								上架
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK_OUT %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK_OUT %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
@@ -319,7 +319,7 @@ $.fn.datebox.defaults.parser = function(s){
 					}
 				});
 			},
-			changeOrder:function(orderColum){
+			changeOrderBy: function(orderColum){
 				this.orderColum = orderColum;
 				this.isDesc = !this.isDesc ;
 				this.refresh();
