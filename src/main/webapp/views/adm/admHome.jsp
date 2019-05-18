@@ -10,7 +10,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.jpg" type="image/x-icon" />
 <title>后台管理</title>
-<jsp:include page="/inc/admCommon_js_css_inc.jsp"/>
+<%@ include file="/inc/admCommon_js_css.jsp.inc" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adm/home.css">
 <style type="text/css">
 .admTitle{

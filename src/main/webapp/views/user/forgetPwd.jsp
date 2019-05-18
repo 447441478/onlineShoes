@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<jsp:include page="/inc/common_js_css_inc.jsp" />
+<%@ include file="/inc/common_js_css.jsp.inc" %>
 <script type="text/javascript" src="${APP_DIR}/js/md5.js" charset="utf-8"></script>
 <title>找回密码</title>
 <style type="text/css">

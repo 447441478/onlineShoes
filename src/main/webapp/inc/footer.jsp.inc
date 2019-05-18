@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <div class='row myFoot'>
 	<div class="col-md-12" style="height:75px;padding-left: 0;padding-right: 0;">
 		<img style="width: 100%;" alt="我们的优势" src="${pageContext.request.contextPath}/img/footer.jpg">

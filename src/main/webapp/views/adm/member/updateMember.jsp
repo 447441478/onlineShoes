@@ -11,7 +11,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>管理产品</title>
-<jsp:include page="/inc/admCommon_js_css_inc.jsp" />
+<%@ include file="/inc/admCommon_js_css.jsp.inc" %>
 <!-- 引入Bootstrap -->
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/bootstrap-3.3.7-dist/css/bootstrap.min.css" />

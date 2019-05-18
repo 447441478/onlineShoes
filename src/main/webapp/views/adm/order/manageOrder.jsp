@@ -10,7 +10,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>管理产品</title>
-<jsp:include page="/inc/admCommon_js_css_inc.jsp"/>
+<%@ include file="/inc/admCommon_js_css.jsp.inc" %>
 <!-- 引入Bootstrap -->
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
@@ -135,7 +135,7 @@ $.fn.datebox.defaults.parser = function(s){
 				{{tab.txt}}
 				</span>
 			</div>
-			<div class="col-md-12 table-responsive" style="background-color: #f8f9fb; border-radius: 5px;">
+			<div class="col-md-12 table-responsive" style="background-color: #f8f9fb;">
 				<table class="table table-striped" style="margin-bottom: 0;font-size: 13px;font-family: 微软雅黑;table-layout: fixed;">
 					<thead>
 						<tr>

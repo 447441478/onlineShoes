@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.jpg" type="image/x-icon" />
 <title>鲸鱼鞋店</title>
-<jsp:include page="/inc/common_js_css_inc.jsp" />
+<%@ include file="/inc/common_js_css.jsp.inc" %>
 <style type="text/css">
 .shoesName{
 	margin: 0;
@@ -117,7 +117,7 @@
 	<!-- 整个页面容器 -->
 	<div class="container">
 		<!-- 顶部 -->
-		<jsp:include page="/inc/header_inc.jsp" />
+		<jsp:include page="/inc/header.jsp.inc" />
 		<div class="row">
 			<div class="col-md-12" style="padding: 10px 0 0 0;">
 				<ol class="breadcrumb">
@@ -195,7 +195,7 @@
 		</div>
 		<br/><br/>
 		<!-- 底部 -->
-		<jsp:include page="/inc/footer_inc.jsp" />
+		<%@ include file="/inc/footer.jsp.inc" %>
 	</div>
 </body>
 <script type="text/javascript">

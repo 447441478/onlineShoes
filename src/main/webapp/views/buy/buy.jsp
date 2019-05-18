@@ -8,7 +8,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.jpg" type="image/x-icon" />
-<jsp:include page="/inc/common_js_css_inc.jsp" />
+<%@ include file="/inc/common_js_css.jsp.inc" %>
 <title>结算页</title>
 <style type="text/css">
 .receiver input{
@@ -32,7 +32,7 @@
 	<!-- 整个页面容器 -->
 	<div class="container">
 		<!-- 顶部 -->
-		<jsp:include page="/inc/header_inc.jsp" />
+		<%@ include file="/inc/header.jsp.inc" %>
 		<div class="col-md-10 col-md-offset-1" id="order">
 			<div class="col-md-12" style="color: #666;height: 42px;line-height: 42px;font-size: 16px;">
 				填写并核对订单信息

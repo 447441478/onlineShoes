@@ -6,7 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>添加产品</title>
-<jsp:include page="/inc/admCommon_js_css_inc.jsp"/>
+<%@ include file="/inc/admCommon_js_css.jsp.inc" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adm/addProduct.css">
 </head>
 <body style="overflow-x:hidden;overflow-y:auto;">

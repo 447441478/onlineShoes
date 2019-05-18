@@ -6,7 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.jpg" type="image/x-icon" />
-<jsp:include page="/inc/common_js_css_inc.jsp" />
+<%@ include file="/inc/common_js_css.jsp.inc" %>
 <title>购物车</title>
 <style type="text/css">
 #car .item{
@@ -32,7 +32,7 @@
 	<!-- 整个页面容器 -->
 	<div class="container">
 		<!-- 顶部 -->
-		<jsp:include page="/inc/header_inc.jsp" />
+		<%@ include file="/inc/header.jsp.inc" %>
 		<br/>
 		<div id="car" class="row" >
 			<div class="col-md-10 col-md-offset-1" style="border: 2px solid #f0f0f0; background-color: #fff; ">
@@ -72,7 +72,7 @@
 		</div>	
 		<br/>
 		<!-- 底部 -->
-		<jsp:include page="/inc/footer_inc.jsp" />
+		<%@ include file="/inc/footer.jsp.inc" %>
 	</div>
 </body>
 <script type="text/javascript">
