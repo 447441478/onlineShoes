@@ -102,7 +102,7 @@ a:hover{
 				<div class="col-xs-5 col-xs-offset-3">
 					<div class="input-group">
 					  <span class="input-group-addon" id="sizing-addon-name"><i class="glyphicon glyphicon-home" style="color: #5bc0de;"></i></span>
-					  <input id="username" name="username" @change="checkUsername()" type="text" 
+					  <input id="username" ref="username" name="username" @change="checkUsername()" type="text" 
 					  	v-model="username" class="form-control" placeholder="账号/邮箱" 
 					  	aria-describedby="sizing-addon-name" AUTOCOMPLETE="off" />
 					</div>
@@ -269,7 +269,17 @@ var login = new Vue({
 				this.changeCheckCode();
 			}
 		}
-	}
+	},
+	mounted: function(){
+		var that = this;
+		setTimeout(function(){
+			that.$refs.username.focus();
+		},500);
+	},
+	created: function(){
+		
+	},
+
 });
 </script>
 </html>

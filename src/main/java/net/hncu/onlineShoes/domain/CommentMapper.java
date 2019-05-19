@@ -1,6 +1,8 @@
 package net.hncu.onlineShoes.domain;
 
 import java.util.List;
+import java.util.Map;
+
 import net.hncu.onlineShoes.domain.Comment;
 import net.hncu.onlineShoes.domain.CommentExample;
 import org.apache.ibatis.annotations.Param;
@@ -33,4 +35,7 @@ public interface CommentMapper {
     int updateByPrimaryKeyWithBLOBs(Comment record);
 
     int updateByPrimaryKey(Comment record);
+    
+    List<Comment> select4Manage(Map<String, Object> args);
+    
 }

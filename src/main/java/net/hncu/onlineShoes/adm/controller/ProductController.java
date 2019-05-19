@@ -3,7 +3,10 @@ package net.hncu.onlineShoes.adm.controller;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,7 +23,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
+import net.hncu.onlineShoes.comm.SearchField;
+import net.hncu.onlineShoes.domain.Comment;
+import net.hncu.onlineShoes.domain.CommentExample;
+import net.hncu.onlineShoes.domain.CommentExample.Criteria;
+import net.hncu.onlineShoes.domain.CommentMapper;
 import net.hncu.onlineShoes.domain.Shoes;
 import net.hncu.onlineShoes.domain.ShoesSize;
 import net.hncu.onlineShoes.domain.User;
@@ -38,6 +48,9 @@ public class ProductController {
 	private static final Logger logger = Logger.getLogger(ProductController.class);
 	@Autowired
 	private ShoesService shoesServic;
+	
+	@Autowired
+	private CommentMapper commentMapper;
 	
 	@RequestMapping(path="/add",method= {RequestMethod.GET})
 	public String add() {
@@ -199,5 +212,92 @@ public class ProductController {
 		logger.info("删除产品");
 		String res = shoesServic.deleteShoes(shoesIds);
 		return Msg.success().setInfo(res);
+	}
+	
+	@RequestMapping(path="/manegeComment", method=RequestMethod.GET)
+	public String manageComment(HttpSession session, Model model) throws IOException {
+		User user = (User) session.getAttribute("user");
+		
+		Integer userId = user.getUserId();
+		PageInfo<Comment> pageInfo = getCommentPageInfo(userId, 1, 10, null, null, false, false, 0L, 0L);
+		List<Comment> comments = pageInfo.getList();
+		ObjectMapper om = new ObjectMapper();
+		model.addAttribute("comments", om.writeValueAsString(comments));
+		model.addAttribute("total", pageInfo.getTotal());
+		return ROOT + "manegeComment";
+	}
+	
+	@ResponseBody
+	@RequestMapping(path="/getComment", method=RequestMethod.GET)
+	public Msg getComment(@RequestParam(defaultValue="1") Integer currentPage, 
+			@RequestParam(defaultValue="10") Integer pageSize, 
+			@RequestParam(defaultValue="") String orderColum,
+			@RequestParam(defaultValue="false") Boolean isDesc,
+			@RequestParam(defaultValue="") String keyWord,
+			@RequestParam(defaultValue="false")Boolean openTime,
+			@RequestParam(defaultValue="0") Long startTime,
+			@RequestParam(defaultValue="0") Long endTime,
+			HttpSession session) throws IOException {
+		User user = (User) session.getAttribute("user");
+		Integer userId = user.getUserId();
+		PageInfo<Comment> pageInfo = getCommentPageInfo(userId, currentPage, pageSize, keyWord, orderColum, isDesc, openTime, startTime, endTime);
+		return Msg.success()
+				.add("keyWord", keyWord)
+				.add("openTime", openTime)
+				.add("startTime", startTime)
+				.add("endTime", endTime)
+				.add("total", pageInfo.getTotal())
+				.add("comments", pageInfo.getList());
+	}
+	
+	private PageInfo<Comment> getCommentPageInfo(Integer userId,Integer currentPage, Integer pageSize,
+			String keyWord, String orderFiled, Boolean isDesc,
+			Boolean openTime, Long startTime, Long endTime){
+		Map<String, Object> args = new HashMap<String, Object>();
+		if(userId != null) {
+			args.put("user_id", userId);
+		}
+		if(currentPage == null) {
+			currentPage = 1;
+		}
+		if(pageSize == null) {
+			pageSize = 10;
+		}
+		if(keyWord != null && !"".equals(keyWord.trim())) {
+			args.put("shoes_name", keyWord);
+		}
+		String orderByField = SearchField.CommentDef.getOrderByField(orderFiled, isDesc);
+		args.put("orderByField", orderByField);
+		if(openTime && DateUtil.isBefore(startTime, endTime)) {
+			args.put("openTime", openTime);
+			args.put("startTime", DateUtil.getDayFirstSeconds(startTime));
+			args.put("endTime", DateUtil.getDayLastSeconds(endTime));
+		}
+		PageHelper.startPage(currentPage, pageSize);
+		List<Comment> comments = commentMapper.select4Manage(args);
+		PageInfo<Comment> pageInfo = new PageInfo<>(comments);
+		return pageInfo;
+	}
+	
+	@ResponseBody
+	@RequestMapping(path="/updateComment", method=RequestMethod.POST)
+	public Msg updateComment(@RequestParam(name="commentIds[]", required=true) Integer[] commentIds, 
+			@RequestParam(name="public", defaultValue="false") Boolean isPublic,
+			@RequestParam(name="hidden", defaultValue="false") Boolean isHidden,
+			HttpSession session) {
+		if(commentIds.length < 1) 
+			return Msg.fail();
+		CommentExample example = new CommentExample();
+		Criteria criteria = example.createCriteria();
+		Comment comment = new Comment();
+		if(isPublic) {
+			comment.setFlag(Comment.Flag.PUBLIC);
+		}
+		if(isHidden) {
+			comment.setFlag(Comment.Flag.HIDDENT);
+		}
+		criteria.andCommentIdIn(Arrays.asList(commentIds));
+		commentMapper.updateByExampleSelective(comment, example);
+		return Msg.success();
 	}
 }

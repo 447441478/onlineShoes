@@ -117,7 +117,7 @@
 	<!-- 整个页面容器 -->
 	<div class="container">
 		<!-- 顶部 -->
-		<jsp:include page="/inc/header.jsp.inc" />
+		<%@ include file="/inc/header.jsp.inc" %>
 		<div class="row">
 			<div class="col-md-12" style="padding: 10px 0 0 0;">
 				<ol class="breadcrumb">

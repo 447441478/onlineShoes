@@ -11,6 +11,7 @@ import net.hncu.onlineShoes.domain.CommentMapper;
 import net.hncu.onlineShoes.domain.OrderDetail;
 import net.hncu.onlineShoes.domain.OrderDetailExample;
 import net.hncu.onlineShoes.domain.OrderDetailMapper;
+import net.hncu.onlineShoes.util.SensitiveWordFilterUtil;
 
 @Service("commnetService")
 public class CommnetServiceImpl implements CommnetService {
@@ -34,6 +35,8 @@ public class CommnetServiceImpl implements CommnetService {
 		if(orderDetailId == null) {
 			return "orderDetailId == null";
 		}
+		//敏感词替换
+		commnet.setContent(SensitiveWordFilterUtil.replaceSensitiveWord(commnet.getContent(), "[和谐]"));
 		OrderDetailExample orderDetailExample = new OrderDetailExample();
 		orderDetailExample.createCriteria()
 			.andOrderDetailIdEqualTo(orderDetailId)

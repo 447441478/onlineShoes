@@ -130,9 +130,15 @@
     </if>
     <include refid="WithShoes_Column_List" />
     from orderdetail od left join shoes s on od.shoes_id = s.shoes_id
-    <if test="_parameter != null">
+   	<if test="_parameter != null">
       <include refid="Example_Where_Clause" />
+      and 
     </if>
+    <if test="_parameter == null">
+    	where
+    </if>
+    	s.flag &amp; 1 != 1
+    
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
@@ -148,7 +154,7 @@
     select 
     <include refid="WithShoes_Column_List" />
     from orderdetail od left join shoes s on od.shoes_id = s.shoes_id
-    where od.order_detail_id = #{orderDetailId,jdbcType=INTEGER}
+    where od.order_detail_id = #{orderDetailId,jdbcType=INTEGER} and s.flag &amp; 1 != 1
   </select>
  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

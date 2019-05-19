@@ -5,6 +5,7 @@ package net.hncu.onlineShoes.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
@@ -77,15 +78,23 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String getDayFirstSeconds(long time) {
-		long dayMilliSeconds = 24*60*60*1000;
-		return timeConversionString(time/dayMilliSeconds*dayMilliSeconds);
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(time);
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		return timeConversionString(c.getTimeInMillis());
 	}
 	/**
 	 * 获取 yyyy-MM-dd 23:59:59
 	 * @return
 	 */
 	public static String getDayLastSeconds(long time) {
-		long dayMilliSeconds = 24*60*60*1000;
-		return timeConversionString((time/dayMilliSeconds+1)*dayMilliSeconds-1000);
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(time);
+		c.set(Calendar.HOUR_OF_DAY, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
+		return timeConversionString(c.getTimeInMillis());
 	}
 }

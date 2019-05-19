@@ -797,7 +797,7 @@ public class OrderDetailExample {
         }
         
         public Criteria andFlagBitOr(Integer value) {
-        	addCriterion("flag | " + value + " = " + value);
+        	addCriterion("convert(flag | " + value + ",SIGNED) = " + value);
         	return (Criteria) this;
         }
         public Criteria andFlagBitAnd(Integer value) {

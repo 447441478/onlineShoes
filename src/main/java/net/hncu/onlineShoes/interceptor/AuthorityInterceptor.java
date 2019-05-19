@@ -1,5 +1,8 @@
 package net.hncu.onlineShoes.interceptor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -9,17 +12,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.hncu.onlineShoes.domain.User;
+import net.hncu.onlineShoes.util.BitUtil;
 
 public class AuthorityInterceptor implements HandlerInterceptor{
 	private static Logger logger = Logger.getLogger(AuthorityInterceptor.class);
-	private static int[] admFlags;
+	private static Map<String, Integer> uriMapping;
 	static {
-		admFlags = new int[] {
-			User.Flag.PRODUCT_MANAGER,
-			User.Flag.MEMBER_MANAGER,
-			User.Flag.ORDER_MANAGER,
-			User.Flag.SUPER_MANAGER
-		};
+		uriMapping = new HashMap<>();
+		uriMapping.put("product", User.Flag.PRODUCT_MANAGER);
+		uriMapping.put("member", User.Flag.MEMBER_MANAGER);
+		uriMapping.put("order", User.Flag.ORDER_MANAGER);
 	}
 
 	@Override
@@ -36,8 +38,7 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 		if(user == null && !canInNoLogin(uri)) { //用户未登录进行控制
 			canIn = false;
 		}
-		
-		if(uri.indexOf("/adm") >= 0 && !canInAdm(user)) { //进行adm路径权限认证
+		if(uri.indexOf("/adm") >= 0 && !canInAdm(user, uri)) { //进行adm路径权限认证
 			canIn = false;
 		}
 		if(!canIn) {
@@ -73,19 +74,21 @@ public class AuthorityInterceptor implements HandlerInterceptor{
 		return true;
 	}
 
-	private boolean canInAdm(User user) {
-		if(user == null) 
+	private boolean canInAdm(User user, String uri) {
+		if(user == null || uri == null) 
 			return false;
 		Integer flag = user.getFlag();
-		if(flag == null) {
-			return false;
+		if(BitUtil.hasBit(flag, User.Flag.SUPER_MANAGER)) 
+			return true;
+		
+		String[] strs = uri.split("/");
+		if(strs != null && strs.length > 2) {
+			String key = strs[2];
+			Integer _flag = uriMapping.get(key);
+			return BitUtil.hasBit(flag, _flag);
+		} else {
+			 return true;
 		}
-		for (int i : admFlags) {
-			if((flag & i) == i) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override

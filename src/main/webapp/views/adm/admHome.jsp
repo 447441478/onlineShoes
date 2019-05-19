@@ -75,6 +75,8 @@ if((flag & <%=User.Flag.PRODUCT_MANAGER%>) == <%=User.Flag.PRODUCT_MANAGER%>){
 	        text: '添加产品<input type="hidden" value="product/add"/>'
 	    },{
 	        text: '管理产品<input class="defaultMenu" type="hidden" value="product/manage"/>',
+	    },{
+	        text: '产品评论<input class="defaultMenu" type="hidden" value="product/manegeComment"/>',
 	    }]
 	});
 }

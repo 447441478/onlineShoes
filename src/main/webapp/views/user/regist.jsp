@@ -94,7 +94,7 @@ a:hover{
 				<div class="col-xs-6 col-xs-offset-2">
 					<div class="input-group">
 					  <span class="input-group-addon" id="sizing-addon-name">账号<!-- <i class="glyphicon glyphicon-home" style="color: #5bc0de;"></i> --></span>
-					  <input id="username" name="username" @change="checkUsername()" type="text" 
+					  <input id="username" ref="username" name="username" @change="checkUsername()" type="text" 
 					  	v-model="username" class="form-control" placeholder="3-20个字符，区分大小写" 
 					  	aria-describedby="sizing-addon-name" AUTOCOMPLETE="off" />
 					</div>
@@ -247,7 +247,13 @@ var v_regist = new Vue({
 		}
 	},
 	create:function(){
-	}
+	},
+	mounted: function(){
+		var that = this;
+		setTimeout(function(){
+			that.$refs.username.focus();
+		},500);
+	},
 });
 
 </script>

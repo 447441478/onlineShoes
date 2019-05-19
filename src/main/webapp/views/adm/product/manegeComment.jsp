@@ -1,3 +1,4 @@
+<%@page import="net.hncu.onlineShoes.domain.Comment"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="net.hncu.onlineShoes.util.Msg"%>
 <%@page import="net.hncu.onlineShoes.comm.*"%>
@@ -8,7 +9,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>管理产品</title>
+<title>评论管理</title>
 <%@ include file="/inc/admCommon_js_css.jsp.inc" %>
 <!-- 引入Bootstrap -->
 <link rel="stylesheet"
@@ -22,10 +23,10 @@ table tr th,td {
 	white-space:nowrap;
 	text-overflow:ellipsis;
 }
-#shoesTable tbody tr:hover{
+#comments tbody tr:hover{
 	background-color: rgb(255,255,204);
 }
-#shoesTable tbody tr td{
+#comments tbody tr td{
 	line-height: inherit;
 }
 .glyphicon-ok{
@@ -62,18 +63,17 @@ $.fn.datebox.defaults.parser = function(s){
 </script>
 <body style="overflow-x:hidden;overflow-y:auto;margin: 0 !important;">
 	<div class="top_bar">
-		<div class="top_bar_title">管理产品</div>
+		<div class="top_bar_title">评论管理</div>
 	</div>
 	<div class="container-fluid">
-		<div id='shoesTable'  class="row" >
+		<div id='comments'  class="row" >
 			<div v-show='tip!=""' style="position: fixed;z-index:100;top:5px;" class="alert alert-warning col-md-offset-5" >
 			    <a href="#" class="close" @click.stop="tip=''" style="margin-left: 8px;">&times;</a>
 			    <span>{{tip}}</span>
 			</div>
 			<div class="options col-md-12">
-				<button @click.stop="add()" type="button" class="btn btn-info btn-sm">添加</button>
-				<button @click.stop="del()" type="button" class="btn btn-danger btn-sm">批量删除</button>
-				<button @click.stop="update()" type="button" class="btn btn-warning btn-sm">修改</button>
+				<button @click.stop="public()" type="button" class="btn btn-danger btn-sm">公开评论</button>
+				<button @click.stop="hidden()" type="button" class="btn btn-warning btn-sm">隐藏评论</button>
 			</div>
 			<div class="searchs col-md-12">
 				<form class="form-inline">
@@ -82,8 +82,8 @@ $.fn.datebox.defaults.parser = function(s){
 						<input type="text" class="form-control" id="keyWord" placeholder="产品名称"  />
 					</div>
 					<div class="form-group">
-						<div class="checkbox" style="border: none;">
-							<label><input id="openTime" type="checkbox" />录入时间:</label>
+						<div class="checkbox" style="border: none;margin-left: 8px;">
+							<label><input id="openTime" type="checkbox" />发表时间:</label>
 						</div>
 						<input class="easyui-datebox" id="startTime" name="startTime" data-options="editable:false" value='<%=startTime%>' style="width:110px">
 						<i class="glyphicon glyphicon-resize-horizontal"></i>
@@ -97,53 +97,49 @@ $.fn.datebox.defaults.parser = function(s){
 					<thead>
 						<tr>
 							<th width="40px;"><input style="cursor: pointer;" class="cbxAll" type="checkbox" @click.stop="checkChangeAll()"/></th>
-							<th style="width: 300px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.NAME %>')">
+							<th style="width: 80px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.CommentDef.FLAG %>')">
+								状态
+								<i v-if="orderColum == '<%=SearchField.CommentDef.FLAG %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
+								<i v-if="orderColum == '<%=SearchField.CommentDef.FLAG %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
+							</th>
+							<th style="width: 200px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.CommentDef.SHOES_NAME %>')">
 								产品名称
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
+								<i v-if="orderColum == '<%=SearchField.CommentDef.SHOES_NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
+								<i v-if="orderColum == '<%=SearchField.CommentDef.SHOES_NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.BRAND_NAME %>')">
-								产品品牌
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.BRAND_NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.BRAND_NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
+							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.CommentDef.USER_NAME %>')">
+								用户名
+								<i v-if="orderColum == '<%=SearchField.CommentDef.USER_NAME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
+								<i v-if="orderColum == '<%=SearchField.CommentDef.USER_NAME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 180px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.ONLINE_TIME %>')">
-								录入时间
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.ONLINE_TIME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.ONLINE_TIME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
+							<th style="width: 180px;cursor: pointer;">
+								内容
 							</th>
-							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.SALE_PRICE %>')">
-								售价
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.SALE_PRICE %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.SALE_PRICE %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
+							<th style="width: 180px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.CommentDef.CREATE_TIME %>')">
+								发表时间
+								<i v-if="orderColum == '<%=SearchField.CommentDef.CREATE_TIME %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
+								<i v-if="orderColum == '<%=SearchField.CommentDef.CREATE_TIME %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.STOCK %>')">
-								库存
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
+							<th style="width: 120px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.CommentDef.IP %>')">
+								IP
+								<i v-if="orderColum == '<%=SearchField.CommentDef.IP %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
+								<i v-if="orderColum == '<%=SearchField.CommentDef.IP %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th style="width: 80px;cursor: pointer;" @click="changeOrderBy('<%=SearchField.ShoesDef.STOCK_OUT %>')">
-								上架
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK_OUT %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
-								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK_OUT %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
-							</th>
-							<th>操作</th>
+							
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(shoes,index) in shoess" @click="check(index)">
-							<td class="cbx"><input :id="'s-'+shoes.id" style="cursor: pointer;" :class="['cbx-'+index]" type="checkbox"  @click.stop="checkChange()"/></td>
-							<td><a style="cursor: pointer;" @click="openShoes(shoes.id)">{{shoes.name}}</a></td>
-							<td>{{shoes.brandName}}</td>
-							<td>{{shoes.onlineTime}}</td>
-							<td>{{shoes.salePrice.toFixed(2)}}</td>
-							<td>{{shoes.stock}}</td>
+						<tr v-for="(comment,index) in comments" @click="check(index)">
+							<td class="cbx"><input :id="'c-'+comment.commentId" style="cursor: pointer;" :class="['cbx-'+index]" type="checkbox"  @click.stop="checkChange()"/></td>
 							<td>
-								<i @click="changeStockOut(index)" style="cursor: pointer;" :class="['glyphicon',{'glyphicon-ok':shoes.stockOut==0,'glyphicon-remove':shoes.stockOut==1}]"></i>
+								{{getState(comment.flag)}}
 							</td>
-							<td>
-								<div  @click.stop="del(shoes.id)" style="color: #f00;cursor: pointer;" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="删除"></div>
-							</td>
+							<td><a style="cursor: pointer;" @click="openShoes(comment.shoesId)">{{comment.shoesName}}</a></td>
+							<td>{{comment.userName}}</td>
+							<td>{{comment.content}}</td>
+							<td>{{comment.createTime}}</td>
+							<td>{{comment.ip}}</td>
+							
 						</tr>
 					</tbody>
 				</table>
@@ -169,18 +165,17 @@ $.fn.datebox.defaults.parser = function(s){
 </body>
 
 <script type="text/javascript">
-	
 	var pageSize = 10;
-	var manageProduct = new Vue({
-		el:"#shoesTable",
+	var v_comments = new Vue({
+		el:"#comments",
 		data:function(){
 			return{
 				pageInfo:{
 					currentPage:1,
-					total:0,
+					total:${total},
 					pageSize:pageSize,
 				},
-				shoess:[],
+				comments: ${comments},
 				checkAll:false,
 				tip:"",
 				timer:null,
@@ -193,11 +188,87 @@ $.fn.datebox.defaults.parser = function(s){
 			}
 		},
 		methods:{
+			'public': function(){
+				this.tip="";
+				$cbxs = $("#comments .cbx input:checked");
+				if($cbxs.length == 0){
+					this.tip="请选择要公布的评论";
+				}else{
+					var commentIds=[];
+					$cbxs.each(function(){
+						var commentId = this.id.substring(2);
+						commentIds.push(commentId);
+					});
+					var data = {
+						commentIds:commentIds,
+						'public': true,
+					};
+					var that = this;
+					$.ajax({
+						url:"${APP_DIR}/adm/product/updateComment",
+						data: data,
+						type:"POST",
+						success:function(msg){
+							if(msg.code == <%=Msg.Code.SUCCESS%>){
+								$("#comments .cbxAll").prop("checked",false);
+								that.refresh();
+							}
+						},
+						error: function(){
+							that.tip="系统繁忙...";
+						}
+					});
+					
+					
+				}
+			},
+			hidden: function(){
+				this.tip="";
+				$cbxs = $("#comments .cbx input:checked");
+				if($cbxs.length == 0){
+					this.tip="请选择要隐藏的评论";
+				}else{
+					var commentIds=[];
+					$cbxs.each(function(){
+						var commentId = this.id.substring(2);
+						commentIds.push(commentId);
+					});
+					var data = {
+						commentIds:commentIds,
+						hidden: true,
+					};
+					var that = this;
+					$.ajax({
+						url:"${APP_DIR}/adm/product/updateComment",
+						data: data,
+						type:"POST",
+						success:function(msg){
+							if(msg.code == <%=Msg.Code.SUCCESS%>){
+								$("#comments .cbxAll").prop("checked",false);
+								that.refresh();
+							}
+						},
+						error: function(){
+							that.tip="系统繁忙...";
+						}
+					});
+					
+					
+				}
+			},
+			getState: function(flag){
+				if(flag == <%=Comment.Flag.PUBLIC%>){
+					return "已公开";
+				}
+				if(flag & <%=Comment.Flag.HIDDENT%> == <%=Comment.Flag.HIDDENT%>){
+					return "隐藏";
+				}
+			},
 			openShoes: function(shoesId){
 				window.open("${APP_DIR}/shoes/"+shoesId);;
 			},
 			checkChange:function(){
-				$cbxs = $("#shoesTable .cbx input");
+				$cbxs = $("#comments .cbx input");
 				var len = $cbxs.length;
 				$cbxs.each(function(){
 					if(this.checked){
@@ -205,115 +276,33 @@ $.fn.datebox.defaults.parser = function(s){
 					}
 				});
 				if(len == 0){
-					$("#shoesTable .cbxAll").prop("checked",true);
+					$("#comments .cbxAll").prop("checked",true);
 				}else{
-					$("#shoesTable .cbxAll").prop("checked",false);
+					$("#comments .cbxAll").prop("checked",false);
 				}
 			},
 			checkChangeAll:function(){
-				var val = $("#shoesTable .cbxAll").prop("checked");
-				$("#shoesTable .cbx input").prop("checked",val);
-			},
-			changeStockOut:function(index){
-				var stockOut = this.shoess[index].stockOut;
-				if(stockOut == 1){
-					stockOut = 0;
-				}else{
-					stockOut = 1;
-				}
-				var shoesId = this.shoess[index].id;
-				var that = this;
-				$.ajax({
-					url:"${APP_DIR}/adm/product/update?shoesId="+shoesId,
-					data:{
-						stock_out:stockOut
-					},
-					type:"post",
-					success:function(msg){
-						if(msg.code == <%=Msg.Code.SUCCESS%>){
-							that.refresh();
-						}
-					}
-				});
+				var val = $("#comments .cbxAll").prop("checked");
+				$("#comments .cbx input").prop("checked",val);
 			},
 			check:function(index){
-				var $input = $("#shoesTable .cbx input").eq(index);
+				var $input = $("#comments .cbx input").eq(index);
 				$input.prop("checked",!$input.prop("checked"));
-			},
-			update:function(){
-				this.tip="";
-				$cbxs = $("#shoesTable .cbx input:checked");
-				if($cbxs.length == 0){
-					this.tip="请选择要修改的记录";
-				}else if($cbxs.length == 1){
-					var shoesId = $cbxs[0].id.substring(2);
-					$("#myModal iframe").attr("src","update?shoesId="+shoesId);
-					$('#myModal').modal("show");
-				}else{
-					this.tip = "无法同时修改多条记录";
-				}
-			},
-			del:function(id){
-				var shoesIds = [];
-				if(id){
-					if(!confirm("确定删除？")){
-						$("#s-"+id).prop("checked",false);
-						return;
-					}
-					shoesIds.push(id);
-				}else{
-					this.tip="";
-					$cbxs = $("#shoesTable .cbx input:checked");
-					if($cbxs.length == 0){
-						this.tip="请选择删除的记录";
-					}else{
-						if(!confirm("确定删除？")){
-							$cbxs.prop("checked",false);
-							$("#shoesTable .cbxAll").prop("checked",false);
-							return;
-						}
-						var shoesIds=[];
-						$cbxs.each(function(){
-							var shoesId = this.id.substring(2);
-							shoesIds.push(shoesId);
-						});
-					}
-				}
-				var that = this;
-				$.ajax({
-					url:"${APP_DIR}/adm/product/del",
-					type:"POST",
-					data:{
-						shoesIds:shoesIds,
-					},
-					success:function(msg){
-						if(msg.code == <%=Msg.Code.SUCCESS%>){
-							that.refresh();
-							that.tip = msg.info;
-						}
-					}
-				});
-				
-			},
-			add:function(){
-				this.tip="";
-				$("#myModal iframe").attr("src","add");
-				$("#myModal").modal("show");
 			},
 			refresh:function(){
 				var that = this;
 				var data = this.getSearchArg();
 				$.ajax({
-					url:"${APP_DIR}/adm/product/get",
+					url:"${APP_DIR}/adm/product/getComment",
 					data:data,
 					type:"get",
 					success:function(msg){
 						if(msg.code == <%=Msg.Code.SUCCESS%>){
 							that.pageInfo.total = msg.datas.total;
-							that.shoess = msg.datas.shoesList;
+							that.comments = msg.datas.comments;
 							that.refreshSearch(msg.datas);
-							$("#shoesTable .cbx input:checked").prop("checked",false);
-							$("#shoesTable .cbxAll").prop("checked",false);
+							$("#comments .cbx input:checked").prop("checked",false);
+							$("#comments .cbxAll").prop("checked",false);
 						}
 					}
 				});
@@ -364,24 +353,6 @@ $.fn.datebox.defaults.parser = function(s){
 			},
 		},
 		created:function(){
-			var that = this;
-			var data = {
-				currentPage:this.pageInfo.currentPage,
-				pageSize:this.pageInfo.pageSize,
-			};
-			$.ajax({
-				url:"${APP_DIR}/adm/product/get",
-				data:data,
-				type:"get",
-				asycn:false, //同步请求
-				success:function(msg){
-					if(msg.code == <%=Msg.Code.SUCCESS%>){
-						that.pageInfo.total = msg.datas.total;
-						that.shoess = msg.datas.shoesList;
-						that.refreshSearch(msg.datas);
-					}
-				}
-			});
 			
 		}
 	});

@@ -21,6 +21,10 @@ public class BitUtil {
 		if(value == null) return false;
 		return (value & flag) == flag;
 	}
+	public static boolean hasBit(Integer value, Integer flag) {
+		if(value == null || flag == null) return false;
+		return (value & flag) == flag;
+	}
 	/**
 	 * 置起 flag 位
 	 * @param value

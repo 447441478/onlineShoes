@@ -153,7 +153,9 @@ public class ShoesController {
 		model.addAttribute("shoesJson", mapper.writeValueAsString(shoes));
 		model.addAttribute("checkShoesSize", shoeSize);
 		CommentExample example = new CommentExample();
-		example.createCriteria().andShoesIdEqualTo(id);
+		example.createCriteria()
+				.andShoesIdEqualTo(id)
+				.andFlagBitOr(~Comment.Flag.HIDDENT);
 		List<Comment> comments = commentMapper.selectByExampleWithBLOBs(example);
 		model.addAttribute("comments",  mapper.writeValueAsString(comments));
 		boolean canComment = false;

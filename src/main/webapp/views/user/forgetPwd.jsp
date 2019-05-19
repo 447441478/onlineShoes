@@ -129,7 +129,7 @@ a:hover{
 			<div class="row" style="height: 36px;line-height: 36px; margin-top: 36px;">
 				<div style="text-align: right;padding-right: 0;" class="col-xs-3">账号</div>
 				<div class="col-xs-5">
-					  <input name="username" @change="checkUsername()" type="text" 
+					  <input name="username" ref="username" @change="checkUsername()" type="text" 
 					  	v-model="username" class="form-control" placeholder="3-20个字符，区分大小写"  
 					  	/>
 				</div>
@@ -208,6 +208,9 @@ a:hover{
 			<div class="row" style="height: 36px;line-height: 36px;margin-top: 36px;">
 				<div class="col-xs-4 col-xs-offset-3" style="text-align: center;">
 					<div @click.stop='findBack()' class="registBtn">马上找回</div>
+				</div>
+				<div class="col-xs-2" style="text-align: center;height: inherit;">
+					<a href="login" style="position: relative;bottom: -8px;">返回登录</a>
 				</div>
 			</div>
 		</form>
@@ -343,7 +346,13 @@ a:hover{
 					});
 				}				
 			}
-		}
+		},
+		mounted: function(){
+			var that = this;
+			setTimeout(function(){
+				that.$refs.username.focus();
+			},500);
+		},
 	});
 </script>
 </html>

@@ -10,9 +10,13 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="flag" jdbcType="INTEGER" property="flag" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="net.hncu.onlineShoes.domain.Comment">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+   <resultMap extends="ResultMapWithBLOBs" id="WithShoesNameResultMap" type="net.hncu.onlineShoes.domain.Comment">
+    <result column="shoes_name" jdbcType="VARCHAR" property="shoesName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -115,6 +119,28 @@
     <include refid="Blob_Column_List" />
     from comment
     where comment_id = #{commentId,jdbcType=INTEGER}
+  </select>
+  <sql id="WithShoesName_Column_List">
+    c.comment_id, c.order_detail_id, c.user_id, c.shoes_id, c.ip, 
+    c.create_time, c.flag, c.user_name, c.content, s.name as shoes_name
+  </sql>
+   <select id="select4Manage" parameterType="hashmap" resultMap="WithShoesNameResultMap">
+    select 
+    <include refid="WithShoesName_Column_List" />
+    from comment c LEFT JOIN shoes s ON c.shoes_id=s.shoes_id
+    WHERE s.flag &amp; 1 != 1
+   	<if test="user_id != null">
+   		and s.user_id = #{user_id}
+   	</if>
+   	<if test="shoes_name != null">
+   		and s.name like "%"#{shoes_name}"%"
+   	</if>
+   	<if test="openTime">
+   		and c.create_time BETWEEN #{startTime} AND #{endTime}
+   	</if>
+   	<if test="orderByField != null">
+   		order by ${orderByField}
+   	</if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from comment

@@ -110,4 +110,30 @@ public class SearchField {
 			return USER_ID;
 		}
 	}
+	
+	public static class CommentDef{
+		public static final String COMMENT_ID = "comment_id";
+		public static final String SHOES_NAME = "shoes_name";
+		public static final String USER_NAME = "user_name";
+		public static final String CREATE_TIME = "create_time";
+		public static final String IP = "ip";
+		public static final String FLAG = "flag";
+		
+		public static String getOrderByField(String field, boolean isDesc) {
+			if(field == null) {
+				return "c."+COMMENT_ID;
+			}
+			switch(field) {
+				case SHOES_NAME:
+					return "s."+field + (isDesc ? " desc " : "");
+				case USER_NAME:
+				case CREATE_TIME:
+				case IP:
+				case FLAG:
+					return "c."+field + (isDesc ? " desc " : "");
+			}
+			return "c."+COMMENT_ID;
+		}
+	}
+	
 }

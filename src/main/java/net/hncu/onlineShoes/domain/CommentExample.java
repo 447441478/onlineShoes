@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.hncu.onlineShoes.domain.ShoesExample.Criteria;
+
 public class CommentExample {
     protected String orderByClause;
 
@@ -533,6 +535,15 @@ public class CommentExample {
         public Criteria andFlagNotBetween(Integer value1, Integer value2) {
             addCriterion("flag not between", value1, value2, "flag");
             return (Criteria) this;
+        }
+        
+        public Criteria andFlagBitOr(Integer value) {
+        	addCriterion("convert(flag | " + value + ",SIGNED) = " + value);
+        	return (Criteria) this;
+        }
+        public Criteria andFlagBitAnd(Integer value) {
+        	addCriterion("flag & " + value + " = " + value);
+        	return (Criteria) this;
         }
 
         public Criteria andUserNameIsNull() {

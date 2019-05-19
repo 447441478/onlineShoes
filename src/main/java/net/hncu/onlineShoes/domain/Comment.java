@@ -2,7 +2,16 @@ package net.hncu.onlineShoes.domain;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import net.hncu.onlineShoes.util.DateUtil;
+
 public class Comment {
+	public static class Flag{
+		public static final Integer PUBLIC = 0;  		 //默认 - 公开
+		public static final Integer HIDDENT = 0x1;       //隐藏
+	}
+	
     private Integer commentId;
 
     private Integer orderDetailId;
@@ -12,7 +21,8 @@ public class Comment {
     private Integer shoesId;
 
     private String ip;
-
+    
+    @JsonFormat(pattern=DateUtil.PATTERN_DATE_TIME)
     private Date createTime;
 
     private Integer flag;
@@ -20,6 +30,10 @@ public class Comment {
     private String userName;
 
     private String content;
+    /**
+     * 该属性不存储到数据库，只供传输
+     */
+    private String shoesName;
 
     public Integer getCommentId() {
         return commentId;
@@ -92,4 +106,12 @@ public class Comment {
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
     }
+
+	public String getShoesName() {
+		return shoesName;
+	}
+
+	public void setShoesName(String shoesName) {
+		this.shoesName = shoesName;
+	}
 }
