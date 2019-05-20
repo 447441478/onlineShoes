@@ -8,10 +8,6 @@
 <!-- 引入jquery.cookie -->
 <script type="text/javascript"
 	src="${APP_DIR}/js/jquery.cookie.js"></script>
-<!-- 引入 jQueryUI -->
-<link rel="stylesheet"
-	href="${APP_DIR}/jquery-ui-1.12.1.custom/jquery-ui.min.css" />
-<script type="text/javascript" src="${APP_DIR}/jquery-ui-1.12.1.custom/jquery-ui.min.js" ></script>
 <!-- 引入Bootstrap -->
 <link rel="stylesheet"
 	href="${APP_DIR}/bootstrap-3.3.7-dist/css/bootstrap.css" />

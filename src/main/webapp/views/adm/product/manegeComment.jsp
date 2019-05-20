@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html class="x-admin-sm">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>评论管理</title>
@@ -39,6 +39,9 @@ table tr th,td {
 .options button{
 	margin-left: 10px;
 }
+label{
+font-weight: normal;
+}
 </style>
 </head>
 <%
@@ -47,23 +50,16 @@ table tr th,td {
 	c.set(Calendar.HOUR_OF_DAY, 0);
 	c.set(Calendar.MINUTE, 0);
 	c.set(Calendar.SECOND, 0);
-	String startTime = DateUtil.dateTimeConversionString(c.getTime());
-	c.add(Calendar.DAY_OF_MONTH, 2);
-	String endTime = DateUtil.timeConversionString(c.getTime().getTime()-1000);
+	String startTime = DateUtil.calendarConversionString(c);
+	c.add(Calendar.DAY_OF_MONTH, 1);
+	String endTime = DateUtil.calendarConversionString(c);
 %>
-<script type="text/javascript">
-$.fn.datebox.defaults.parser = function(s){
-	var t = Date.parse(s);
-	if (!isNaN(t)){
-		return new Date(t);
-	} else {
-		return new Date();
-	}
-}
-</script>
 <body style="overflow-x:hidden;overflow-y:auto;margin: 0 !important;">
 	<div class="top_bar">
 		<div class="top_bar_title">评论管理</div>
+		<a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+			<i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+		</a>
 	</div>
 	<div class="container-fluid">
 		<div id='comments'  class="row" >
@@ -76,20 +72,27 @@ $.fn.datebox.defaults.parser = function(s){
 				<button @click.stop="hidden()" type="button" class="btn btn-warning btn-sm">隐藏评论</button>
 			</div>
 			<div class="searchs col-md-12">
-				<form class="form-inline">
-					<div class="form-group">
-						<label for="keyWord">产品名称:</label>
-						<input type="text" class="form-control" id="keyWord" placeholder="产品名称"  />
-					</div>
-					<div class="form-group">
-						<div class="checkbox" style="border: none;margin-left: 8px;">
-							<label><input id="openTime" type="checkbox" />发表时间:</label>
-						</div>
-						<input class="easyui-datebox" id="startTime" name="startTime" data-options="editable:false" value='<%=startTime%>' style="width:110px">
+				<form class="layui-form layui-col-space5">
+					<div class="layui-input-inline layui-show-xs-block">
+						<label for="keyWord" >产品名称：</label>
+						<div class="layui-input-inline layui-show-xs-block">
+	                  		<input id="keyWord" type="text"  placeholder="请输入产品名称" autocomplete="off" class="layui-input">
+	                   	</div>
+                   	</div>
+					<div class="layui-input-inline layui-show-xs-block">
+						<input id="openTime" type="checkbox" lay-skin="primary" title="评论时间：" />
+						<div class="layui-input-inline layui-show-xs-block">
+                           <input class="layui-input" placeholder="开始日" name="startTime" id="startTime" value='<%=startTime%>' />
+                       	</div>
 						<i class="glyphicon glyphicon-resize-horizontal"></i>
-						<input class="easyui-datebox" id="endTime" name="endTime" data-options="editable:false" value='<%=endTime%>' style="width:110px">
+                      	<div class="layui-input-inline layui-show-xs-block">
+                           <input class="layui-input" placeholder="截止日" name="endTime" id="endTime" value='<%=endTime%>' />
+                        </div>
 					</div>
-					<div @click.stop="refresh()" class="btn btn-default" style="margin-left: 8px;">搜索</div>
+					<div class="layui-btn" @click.stop="refresh()">
+                    	<i class="iconfont">&#xe6ac;</i>
+                    	搜索
+                    </div>
 				</form>
 			</div>
 			<div class="col-md-12 table-responsive">
@@ -134,7 +137,7 @@ $.fn.datebox.defaults.parser = function(s){
 							<td>
 								{{getState(comment.flag)}}
 							</td>
-							<td><a style="cursor: pointer;" @click="openShoes(comment.shoesId)">{{comment.shoesName}}</a></td>
+							<td><a style="cursor: pointer;" @click="openShoes(comment.shoesId, comment.commentId)">{{comment.shoesName}}</a></td>
 							<td>{{comment.userName}}</td>
 							<td>{{comment.content}}</td>
 							<td>{{comment.createTime}}</td>
@@ -264,8 +267,8 @@ $.fn.datebox.defaults.parser = function(s){
 					return "隐藏";
 				}
 			},
-			openShoes: function(shoesId){
-				window.open("${APP_DIR}/shoes/"+shoesId);;
+			openShoes: function(shoesId, commentId){
+				window.open("${APP_DIR}/shoes/"+shoesId+"?commentId="+commentId);;
 			},
 			checkChange:function(){
 				$cbxs = $("#comments .cbx input");
@@ -320,17 +323,15 @@ $.fn.datebox.defaults.parser = function(s){
 					isDesc:this.isDesc,
 					keyWord:$("#keyWord").val(),
 					openTime:$("#openTime").prop("checked"),
-					startTime:new Date($("#startTime").datebox("getValue")).getTime(),
-					endTime: new Date($("#endTime").datebox("getValue")).getTime(),
+					startTime: new Date($("#startTime").val()).getTime(),
+					endTime: new Date($("#endTime").val()).getTime(),
 				};
 			},
 			refreshSearch:function(data){
 				$("#keyWord").val(data.keyWord);
 				$("#openTime").prop("checked",data.openTime);
-				try{
-					$("#startTime").datebox('setValue', data.startTime);
-					$("#endTime").datebox('setValue', data.endTime);
-				}catch(e){}
+				$("#startTime").val(new Date(data.startTime).Format("yyyy-MM-dd"));
+				$("#endTime").val(new Date(data.endTime).Format("yyyy-MM-dd"));
 			},
 		},
 		watch:{
@@ -361,41 +362,19 @@ $.fn.datebox.defaults.parser = function(s){
 		$("#myModal").on("hidden.bs.modal",function(){
 			manageProduct.refresh();
 		});
-		$('#startTime').datebox({
-		    formatter: function(date){
-		    	return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
-		    },
-		    parser: function(date){ 
-		    	return new Date(Date.parse(date.replace(/-/g,"/")));
-		    },
-		    onSelect:function(date){
-		    	if(new Date($('#endTime').datebox("getValue")) - date < 0){
-		    		manageProduct.tip = "开始时间不能大于结束时间";
-		    		var oldDate = $(this).datebox("getValue");
-		    		setTimeout(function(){
-		    			$("#startTime").datebox('setValue', oldDate);
-		    		});
-		    	}
-		    }
-		});
-		$('#endTime').datebox({
-		    formatter: function(date){ 
-		    	return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
-		    },
-		    parser: function(date){ 
-		    	return new Date(Date.parse(date.replace(/-/g,"/")));
-		    },
-		    onSelect:function(date){
-		    	if(date - new Date($('#startTime').datebox("getValue")) < 0){
-		    		manageProduct.tip = "结束时间不能小于开始时间";
-		    		var oldDate = $(this).datebox("getValue");
-		    		setTimeout(function(){
-		    			$("#endTime").datebox('setValue', oldDate);
-		    		});
-		    	}
-		    }
-		});
-		$("[data-toggle='tooltip']").tooltip();
+		layui.use(['laydate', 'form'],function() {
+	        var laydate = layui.laydate;
+
+	        //执行一个laydate实例
+	        laydate.render({
+	            elem: '#startTime' //指定元素
+	        });
+
+	        //执行一个laydate实例
+	        laydate.render({
+	            elem: '#endTime' //指定元素
+	        });
+	    });
 	})
 	
 	

@@ -109,7 +109,15 @@
 .comment .tabBar .tab{
 	color: #f00;
 }
-
+.comment .item.check{
+	border: 2px solid #f00;
+}
+.comment .item{
+	background: #f5f5f5;
+	padding-bottom: 8px;
+	padding-top:6px;
+	border-bottom: 1px solid #eee;
+}
 </style>
 <title>产品详情</title>
 </head>
@@ -172,7 +180,7 @@
 				<span class="tab">产品评论</span>
 			</div>
 		<template v-if='showComment'>
-			<div class="col-md-12" v-for="item in comments" style="background: #f5f5f5;padding-bottom: 8px;padding-top:6px;border-bottom: 1px solid #eee;">
+			<div class="col-md-12 item" v-for="item in comments" :class="commentId == item.commentId ? 'check':''">
 				<span style="width: 70px;text-align: left;display: inline-block;">
 					<i class="glyphicon glyphicon-user" style="color: #f00;"></i>
 					{{item.userName}}
@@ -296,6 +304,7 @@
 		 }
 	});
 	
+	var commentId = ${commentId};
 	var canComment = ${canComment};
 	var comments = ${comments};
 	var v_comments = new Vue({
@@ -305,6 +314,7 @@
 				canComment: canComment,
 				comments: comments,
 				content: '',
+				commentId: commentId,
 			}
 		},
 		computed:{

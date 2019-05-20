@@ -35,4 +35,7 @@ public interface OrderDetailMapper {
 	    	   	"select DISTINCT shoes_id from orderdetail" +
 			"</script>")
     List<Integer> getShoesIds();
+    
+    @Select("SELECT count(order_detail_id) FROM orderdetail")
+    long getTotal();
 }

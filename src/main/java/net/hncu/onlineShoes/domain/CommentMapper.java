@@ -6,6 +6,7 @@ import java.util.Map;
 import net.hncu.onlineShoes.domain.Comment;
 import net.hncu.onlineShoes.domain.CommentExample;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface CommentMapper {
     long countByExample(CommentExample example);
@@ -38,4 +39,6 @@ public interface CommentMapper {
     
     List<Comment> select4Manage(Map<String, Object> args);
     
+    @Select("SELECT count(comment_id) FROM comment")
+    long getTotal();
 }

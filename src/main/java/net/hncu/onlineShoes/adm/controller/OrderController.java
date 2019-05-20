@@ -1,10 +1,16 @@
 package net.hncu.onlineShoes.adm.controller;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +31,9 @@ import net.hncu.onlineShoes.domain.OrderDetailMapper;
 import net.hncu.onlineShoes.domain.ShoesMapper;
 import net.hncu.onlineShoes.domain.User;
 import net.hncu.onlineShoes.user.controller.UserController;
+import net.hncu.onlineShoes.util.BitUtil;
 import net.hncu.onlineShoes.util.DateUtil;
+import net.hncu.onlineShoes.util.FileUtil;
 import net.hncu.onlineShoes.util.Msg;
 
 @RequestMapping("/adm/order")
@@ -182,4 +190,100 @@ public class OrderController {
 		}
 	}
 	
+	@RequestMapping(path="/download", method=RequestMethod.GET)
+	public void download(@RequestParam(name = "orderDetailIds[]", required=false) Integer[] orderDetailIds,
+			HttpServletResponse response) throws IOException {
+		LOG.info("导出Execel");
+		String dateStr = DateUtil.dateConversionString(new Date());
+		String filename = "订单-"+dateStr+".xlsx";
+		response.setHeader("Content-Type", "application/force-download");
+		response.setHeader("Content-Disposition", "attachment;fileName="+URLEncoder.encode(filename, "utf-8"));
+		List<OrderDetail> orderDetails = null;
+		if (orderDetailIds != null && orderDetailIds.length > 0) {
+			OrderDetailExample example = new OrderDetailExample();
+			example.createCriteria().andOrderDetailIdIn(Arrays.asList(orderDetailIds));
+			orderDetails = orderDetailMapper.selectByExampleWithShoes(example);
+		}else {
+			orderDetails = orderDetailMapper.selectByExampleWithShoes(null);
+		}
+		String[] sheetNames = {"订单明细"};
+		String[] titles = {
+				"订单编号",
+				"下单时间",
+				"产品名称",
+				"尺码",
+				"单价",
+				"数量",
+				"小计",
+				"姓名",
+				"手机",
+				"地址",
+				"支付方式",
+				"物流单号",
+				"订单状态",
+			};
+		String[][] values = getValues(titles, orderDetails);
+		XSSFWorkbook workbook = FileUtil.generatorXlsx(sheetNames, titles, values);
+		workbook.write(response.getOutputStream());
+		response.getOutputStream().flush();
+	}
+	private String[][] getValues(String[] titles, List<OrderDetail> orderDetails) {
+		String[][] values = new String[orderDetails.size()][titles.length];
+		for (int i = 0; i < orderDetails.size(); i++) {
+			OrderDetail orderDetail = orderDetails.get(i);
+			values[i] = new String[titles.length];
+			values[i][0] = ""+orderDetail.getOrderDetailId();
+			values[i][1] = ""+DateUtil.dateTimeConversionString(orderDetail.getCreateTime());
+			values[i][2] = ""+orderDetail.getShoes().getName();
+			values[i][3] = ""+orderDetail.getShoesSize();
+			values[i][4] = ""+orderDetail.getPrice();
+			values[i][5] = ""+orderDetail.getAmount();
+			values[i][6] = ""+(orderDetail.getAmount() * orderDetail.getPrice().doubleValue());
+			values[i][7] = ""+orderDetail.getName();
+			values[i][8] = ""+orderDetail.getTel();
+			values[i][9] = ""+orderDetail.getAddr();
+			Integer paymethod = orderDetail.getPaymethod();
+			if(paymethod == OrderDetail.Paymethod.DEFAULT) {
+				values[i][10] = "货到付款";
+			} else {
+				values[i][10] = "在线支付/";
+				if(BitUtil.hasBit(paymethod, OrderDetail.Paymethod.AL_PAY)) {
+					values[i][10] += "支付宝";
+				}
+				if(BitUtil.hasBit(paymethod, OrderDetail.Paymethod.WX_PAY)) {
+					values[i][10] += "微信";
+				}
+			}
+			values[i][11] = orderDetail.getLogisticsId() == null ? "" : ""+orderDetail.getLogisticsId();
+			Integer flag = orderDetail.getFlag();
+			switch (flag) {
+				case OrderDetail.Flag.INIT:
+					values[i][12] = "待发货";
+					break;
+				case OrderDetail.Flag.DELIVERED:
+					values[i][12] = "已发货";
+					break;
+				case OrderDetail.Flag.ACCEPTED:
+					values[i][12] = "已签收";
+					break;
+				case OrderDetail.Flag.APPLY_REFUND:
+					values[i][12] = "申请退款";
+					break;
+				case OrderDetail.Flag.COMPLETE_REFUND:
+					values[i][12] = "退款成功";
+					break;
+				case OrderDetail.Flag.COMPLETE_TRANSACTION:
+					values[i][12] = "交易完成";
+					break;
+				case OrderDetail.Flag.EVALUATED:
+					values[i][12] = "已评价";
+					break;
+				default:
+					values[i][12] = "";
+					break;
+			}
+			
+		}
+		return values;
+	}
 }

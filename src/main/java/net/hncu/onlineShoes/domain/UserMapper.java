@@ -4,6 +4,7 @@ import java.util.List;
 import net.hncu.onlineShoes.domain.User;
 import net.hncu.onlineShoes.domain.UserExample;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface UserMapper {
     long countByExample(UserExample example);
@@ -27,4 +28,7 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+    
+    @Select("SELECT count(user_id) FROM user")
+    long getTotal();
 }

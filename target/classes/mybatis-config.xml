@@ -6,7 +6,7 @@
 	<settings> 
 		<setting name="localCacheScope" value="SESSION"/>
 		<!-- 打印sql -->
-		<setting name="logImpl" value="STDOUT_LOGGING" />
+		<!-- <setting name="logImpl" value="STDOUT_LOGGING" /> -->
 	</settings>
 	<plugins>
 	    <plugin interceptor="com.github.pagehelper.PageInterceptor">

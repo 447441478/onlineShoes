@@ -68,6 +68,11 @@ public class DateUtil {
 			date = new Date();
 		return sdf_Date.format(date);
 	}
+	public static String calendarConversionString(Calendar c) {
+		if(c == null)
+			c = Calendar.getInstance();
+		return sdf_Date.format(c.getTime());
+	}
 	public static boolean isBefore(Long startTime, Long endTime) {
 		if(startTime == null || endTime == null)
 			return false;

@@ -2,16 +2,23 @@
 <%@page import="net.hncu.onlineShoes.util.*"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<html>
+<html class="x-admin-sm">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>添加产品</title>
 <%@ include file="/inc/admCommon_js_css.jsp.inc" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adm/addProduct.css">
 </head>
-<body style="overflow-x:hidden;overflow-y:auto;">
+<body style="overflow-x:hidden;overflow-y:auto;background-color: #fff;">
 	<div class="top_bar">
 		<div class="top_bar_title">${shoes == null ? "添加产品":"修改产品"}</div>
+	<% String showRefresh = request.getParameter("showRefresh");
+		if(showRefresh != null){
+	%>	
+		<a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+			<i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+		</a>
+	<%} %>
 	</div>
 	<form id="addProduct" style="font-size: 0;" onsubmit="return false;" method="post" enctype="multipart/form-data">
 		<div class="clear" style="height:10px;"></div>

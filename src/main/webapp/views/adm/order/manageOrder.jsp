@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html class="x-admin-sm">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>管理产品</title>
@@ -76,27 +76,19 @@ label {
 </style>
 </head>
 <%	
-	String startTime = "2019-04-01 00:00:00";
+	String startTime = "2019-04-01";
 	Calendar c = Calendar.getInstance();
 	c.set(Calendar.HOUR_OF_DAY, 0);
 	c.set(Calendar.MINUTE, 0);
 	c.set(Calendar.SECOND, 0);
-	c.add(Calendar.DAY_OF_MONTH, 1);
-	String endTime = DateUtil.timeConversionString(c.getTime().getTime()-1000);
+	String endTime = DateUtil.calendarConversionString(c);
 %>
-<script type="text/javascript">
-$.fn.datebox.defaults.parser = function(s){
-	var t = Date.parse(s);
-	if (!isNaN(t)){
-		return new Date(t);
-	} else {
-		return new Date();
-	}
-}
-</script>
 <body style="overflow-x:hidden;overflow-y:auto;">
 	<div class="top_bar">
 		<div class="top_bar_title">管理订单</div>
+		<a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+			<i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+		</a>
 	</div>
 	<div class="container-fluid">
 		<div id='orderDetails'  class="row" >
@@ -106,26 +98,38 @@ $.fn.datebox.defaults.parser = function(s){
 			</div>
 			<br/>
 			<div class="searchs col-md-12">
-				<form class="form-inline">
-					<div class="form-group">
+				<form class="layui-form layui-col-space5">
+					<div class="layui-input-inline layui-show-xs-block">
 						<label for="keyWord" >产品名称：</label>
-						<input type="text" class="form-control" id="keyWord" placeholder="产品名称"  />
-					</div>
-					<div class="form-group">
-						<label>支付方式：</label>
-						<select id='payMethod' class="form-control">
-							<option value="-1">全部</option>	
+						<div class="layui-input-inline layui-show-xs-block">
+	                  		<input id="keyWord" type="text"  placeholder="请输入产品名称" autocomplete="off" class="layui-input">
+	                   	</div>
+                   	</div>
+					<div class="layui-input-inline layui-show-xs-block">
+                        <select id='payMethod' name="contrller">
+                        	<option value="-1">支付方式</option>	
 							<option value="<%=OrderDetail.Paymethod.DEFAULT%>">货到付款</option>	
 							<option value="<%=OrderDetail.Paymethod.ONLINE_PAY%>">在线支付</option>	
-						</select>
+                        </select>
+                    </div>
+					<div class="layui-input-inline layui-show-xs-block">
+						<span>下单时间：</span>
+						<div class="layui-input-inline layui-show-xs-block">
+                           <input class="layui-input" placeholder="开始日" name="startTime" id="startTime" value='<%=startTime%>' />
+                       	</div>
+                       	<i class="glyphicon glyphicon-resize-horizontal"></i>
+                      	<div class="layui-input-inline layui-show-xs-block">
+                           <input class="layui-input" placeholder="截止日" name="endTime" id="endTime" value='<%=endTime%>' />
+                        </div>
 					</div>
-					<div class="form-group">
-						<span>时间：</span>
-						<input class="easyui-datebox" id="startTime" name="startTime" value='<%=startTime%>' style="width:110px">
-						<i class="glyphicon glyphicon-resize-horizontal"></i>
-						<input class="easyui-datebox" id="endTime" name="endTime" value='<%=endTime%>' style="width:110px">
-					</div>
-					<div @click.stop="search()" class="btn btn-default" style="margin-left: 8px;">搜索</div>
+					<div class="layui-btn" @click.stop="search()">
+                    	<i class="iconfont">&#xe6ac;</i>
+                    	搜索
+                    </div>
+					<div class="layui-btn" @click.stop="exportAll()">
+                    	<i class="iconfont">&#xe714;</i>
+                    	数据导出
+                    </div>
 					<br/><br/>
 				</form>
 			</div>
@@ -163,7 +167,7 @@ $.fn.datebox.defaults.parser = function(s){
 							</tr>
 							<tr>
 								<td colspan="3" style="text-align: left;">
-									{{new Date(item.createTime).toLocaleString()}}
+									下单时间：{{new Date(item.createTime).Format("yyyy-MM-dd hh:mm:ss")}}
 									&emsp;
 									订单编号：{{item.orderDetailId}}
 									&emsp;
@@ -181,7 +185,7 @@ $.fn.datebox.defaults.parser = function(s){
 								<td style="vertical-align: middle;border-left: 1px solid rgb(221,221,221);">￥{{Number(item.price).toFixed(2)}} x {{item.amount}}</td>
 								<td style="border-left: 1px solid rgb(221,221,221);">
 									<div>
-										<span class="glyphicon glyphicon-user">{{item.name}}</span>
+										<i class="iconfont">&#xe753;</i>{{item.name}}
 									</div>
 									<div>
 										<span class="glyphicon glyphicon-phone">{{item.tel}}</span>
@@ -348,24 +352,26 @@ $.fn.datebox.defaults.parser = function(s){
 				this.pageInfo.currentPage = 1;
 				this.refresh();
 			},
+			exportAll: function(){
+				var url = "${APP_DIR}/adm/order/download";
+		        $.download(url,"get","");
+			},
 			getSearchArg:function(){
 				return {
 					currentPage:this.pageInfo.currentPage,
 					pageSize:this.pageInfo.pageSize,
 					keyWord:$("#keyWord").val(),
 					payMethod:$("#payMethod").val(),
-					startTime:new Date($("#startTime").datebox("getValue")).getTime(),
-					endTime: new Date($("#endTime").datebox("getValue")).getTime(),
+					startTime:new Date($("#startTime").val()).getTime(),
+					endTime: new Date($("#endTime").val()).getTime(),
 					flag: this.tabs[this.checkTabIndex].flag,
 				};
 			},
 			refreshSearch:function(data){
 				$("#keyWord").val(data.keyWord);
 				$("#payMethod").val(data.payMethod);
-				try{
-					$("#startTime").datebox('setValue', data.startTime);
-					$("#endTime").datebox('setValue', data.endTime);
-				}catch(e){}
+				$("#startTime").val(new Date(data.startTime).Format("yyyy-MM-dd"));
+				$("#endTime").val(new Date(data.endTime).Format("yyyy-MM-dd"));
 			},
 			refresh:function(){
 				var that = this;
@@ -408,15 +414,19 @@ $.fn.datebox.defaults.parser = function(s){
 			$("#myModal .modal-dialog").css({width:"450px",height:"350px"});
 			/* app.refresh(); */
 		});
-		$('#startTime').datebox({
-		    formatter: function(date){ return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();},
-		    parser: function(date){ return new Date(Date.parse(date.replace(/-/g,"/")));}
-		});
-		$('#endTime').datebox({
-		    formatter: function(date){ return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();},
-		    parser: function(date){ return new Date(Date.parse(date.replace(/-/g,"/")));}
-		});
-		$("[data-toggle='tooltip']").tooltip();
+		layui.use(['laydate', 'form'],function() {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#startTime' //指定元素
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#endTime' //指定元素
+            });
+        });
 	})
 	
 	

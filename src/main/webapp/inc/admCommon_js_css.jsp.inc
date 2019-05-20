@@ -19,10 +19,11 @@
 	href="${APP_DIR}/css/myComponent.css"/>
 <!-- 引入自定义共用组件 -->
 <script type="text/javascript" src="${APP_DIR}/js/vueComponent/myComponent.js" ></script>
-<!-- 引入easyUI -->
-<link rel="stylesheet" type="text/css" href="${APP_DIR}/jquery-easyui-1.7.0/themes/default/easyui.css">
-<link rel="stylesheet" type="text/css" href="${APP_DIR}/jquery-easyui-1.7.0/themes/icon.css">
-<script type="text/javascript" src="${APP_DIR}/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<!-- 引入x-Admin -->
+<link rel="stylesheet" href="${APP_DIR}/css/font.css">
+<link rel="stylesheet" href="${APP_DIR}/css/xadmin.css">
+<script src="${APP_DIR}/lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="${APP_DIR}/js/xadmin.js"></script>
 <style type="text/css">
 html,body{
 	height: 100%;
@@ -77,4 +78,11 @@ for(var k in o)
 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
 return fmt;   
 } 
+// 定义到jQuery全局变量下-文件下载
+jQuery.download = function (url, method, filedir) {
+  jQuery('<form action="' + url + '" method="' + (method || 'get') + '">' +  // action请求路径及推送方法
+              '<input type="text" name="filePath" value="' + filedir + '"/>' + // 文件路径
+          '</form>')
+  .appendTo('body').submit().remove();
+};
 </script>

@@ -143,6 +143,7 @@ public class ShoesController {
 	public String product(@PathVariable Integer id,
 			@RequestParam(name="size",defaultValue="-1") Integer shoeSize,
 			@RequestParam(name="orderDetailId",defaultValue="-1") Integer orderDetailId,
+			@RequestParam(name="commentId",defaultValue="-1") Integer commentId,
 			Model model) throws JsonProcessingException {
 		Shoes shoes = shoesService.getShoesById(id);
 		if(shoes == null || shoes.getShoesId() == null) {
@@ -167,6 +168,7 @@ public class ShoesController {
 			}
 		}
 		model.addAttribute("canComment", canComment);
+		model.addAttribute("commentId", commentId);
 		model.addAttribute("orderDetailId", orderDetailId);
 		return "shoesDetail";
 	}

@@ -36,7 +36,7 @@ public interface ShoesMapper {
 
     int updateByPrimaryKey(Shoes record);
     
-    @Select("SELECT TABLE_ROWS FROM information_schema.TABLES WHERE table_name = 'shoes';")
+    @Select("SELECT count(shoes_id) FROM shoes where flag & ~1 != ~1")
     long getTotal();
     
     @Select("<script>"	

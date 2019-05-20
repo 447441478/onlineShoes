@@ -7,6 +7,12 @@
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.jpg" type="image/x-icon" />
 <%@ include file="/inc/common_js_css.jsp.inc" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css">
+<style type="text/css">
+.carousel-inner .item img{
+	max-height: 400px;
+	max-width: 600px;
+}
+</style>
 </head>
 <body>
 	<!-- 整个页面容器 -->
@@ -14,7 +20,7 @@
 		<!-- 顶部 -->
 		<%@ include file="/inc/header.jsp.inc" %>
 		<!-- 轮播图部分 -->
-		<div class="row carousel">
+		<div class="row carousel" id="carousel">
 			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="2000">
 			  <!-- Indicators -->
 			  <ol class="carousel-indicators">
@@ -26,13 +32,13 @@
 			  <!-- Wrapper for slides -->
 			  <div class="carousel-inner" role="listbox">
 			    <div class="item active">
-			      <img src="${pageContext.request.contextPath}/img/banner1.jpg" alt="...">
+			      <img :src="products[0].imgUrl" :title="products[0].name" @click="jump(products[0].jumpUrl)">
 			    </div>
 			    <div class="item">
-			      <img src="${pageContext.request.contextPath}/img/banner2.jpg" alt="...">
+			      <img :src="products[1].imgUrl" :title="products[1].name" @click="jump(products[1].jumpUrl)">
 			    </div>
 			    <div class="item">
-			      <img src="${pageContext.request.contextPath}/img/banner3.jpg" alt="...">
+			      <img :src="products[2].imgUrl" :title="products[2].name" @click="jump(products[2].jumpUrl)">
 			    </div>
 			  </div>
 			
@@ -66,11 +72,26 @@
 	</div>
 </body>
 <script type="text/javascript">
+	var hotProduct = ${hotProduct};
+	new Vue({
+		el:"#carousel",
+		data:function(){
+			return {
+				products: hotProduct,
+				useDiscount:true,
+			};
+		},
+		methods: {
+			jump: function(url){
+				window.location.href = url;
+			},
+		}
+	}); 
 	new Vue({
 		el:"#hotProduct",
 		data:function(){
 			return {
-				products:${hotProduct},
+				products: hotProduct,
 				useDiscount:true,
 			};
 		},
