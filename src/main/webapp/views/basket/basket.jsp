@@ -76,6 +76,9 @@
 	</div>
 </body>
 <script type="text/javascript">
+	$(function () {
+		$(".funs .shoppingCar").addClass("layui-this");
+	})
 	var carInfo = ${carInfo};
 	var car = new Vue({
 		el:"#car",

@@ -29,7 +29,7 @@
 (function(){
 	var brandId = ${empty brandId ? -1:brandId};
 	var keyWord = "${empty keyWord ? "":keyWord}";
-	var pageSize = 16;
+	var pageSize = 8;
 	new Vue({
 		el:"#b-products",
 		data:function(){

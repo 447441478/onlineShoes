@@ -25,9 +25,38 @@ html, body {
 	position: relative;
 	top: 25%;
 }
-
+.layui-nav .layui-nav-item{
+	line-height: 36px;
+}
+.myTopBar{
+	position: fixed;
+	border-radius: unset;
+	width: 100%;
+	z-index: 1000;
+	left: 0;
+	background: #393D49;
+}
+.myTopBar .funs{
+	width: 600px;
+	float: right;
+	text-align: right;
+	padding-right: 40px;
+}
+.myTopBar .funs a:hover{
+	text-decoration: none;
+}
+.myTopBar .funs .second{
+	top: 40px;
+	min-width: auto;
+	right: 0;
+	width: 125px;
+}
+.myTopBar .funs .second dd{
+	line-height: 36px;
+}
 .myTop {
 	height: 100px;
+	margin-top: 36px;
 }
 
 .myOptions {
@@ -63,3 +92,4 @@ html, body {
 .mySearch {
 	margin-top: 3px;
 }
+

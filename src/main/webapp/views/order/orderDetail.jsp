@@ -107,9 +107,9 @@
 								<td style="text-align:left">
 									<a :href="'${shoesRoot}'+item.shoesId">{{item.shoes.name}}</a>&emsp;{{item.shoesSize}}码
 								</td>
-								<td>￥{{item.price}}</td>
+								<td>￥{{Number(item.price).toFixed(2)}}</td>
 								<td>{{item.amount}}</td>
-								<td><span class="subtotal"  style="font-weight: bold;color:red">￥{{item.price*item.amount}}</span></td>
+								<td><span class="subtotal"  style="font-weight: bold;color:red">￥{{Number(item.price*item.amount).toFixed(2)}}</span></td>
 								<td class="btns" style="padding: 0;">
 									<button @click="applyRefund(item)" v-if="item.flag ==  <%=OrderDetail.Flag.INIT%>" class="btn btn-danger btn-sm" >申请退款</button>
 									<button @click="reminedDelever(item)" v-if="item.flag ==  <%=OrderDetail.Flag.INIT%>" class="btn btn-info btn-sm">提醒发货</button>
@@ -137,6 +137,9 @@
 	</div>	
 </body>
 <script type="text/javascript">
+	$(function () {
+		$(".funs .myOrder").addClass("layui-this");
+	})
 	var tabs = [
 		{
 			txt:"我的订单",
