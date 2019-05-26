@@ -58,6 +58,8 @@ public class ShoesController {
 	
 	@Autowired
 	private ShoesMapper shoesMapper;
+
+	private static final String ROOT = "shoes/";
 	
 	@RequestMapping("/home")
 	public String home(Model model, HttpServletRequest request) throws JsonProcessingException {
@@ -73,7 +75,6 @@ public class ShoesController {
 		model.addAttribute("newProduct", om.writeValueAsString(getViewList(newProduct, request)));
 		List<Shoes> hotProduct = shoesMapper.select4HotProduct();
 		model.addAttribute("hotProduct", om.writeValueAsString(getViewList(hotProduct, request)));
-		
 		return "home";
 	}
 	@RequestMapping("/brand/{brandId}")
@@ -82,7 +83,7 @@ public class ShoesController {
 			return "home";
 		}
 		model.addAttribute("brandId", brandId);
-		return "shoesList";
+		return ROOT + "shoesList";
 	}
 	@RequestMapping(value="/products",method={RequestMethod.GET})
 	@ResponseBody
@@ -170,13 +171,13 @@ public class ShoesController {
 		model.addAttribute("canComment", canComment);
 		model.addAttribute("commentId", commentId);
 		model.addAttribute("orderDetailId", orderDetailId);
-		return "shoesDetail";
+		return ROOT + "shoesDetail";
 	}
 	@RequestMapping(value="/products/search",method={RequestMethod.GET})
 	public String search(@RequestParam(required=true) String keyWord, Model model) throws UnsupportedEncodingException {
 		keyWord = URLDecoder.decode(keyWord, "utf-8");
 		model.addAttribute("keyWord", keyWord);
-		return "shoesList";
+		return ROOT + "shoesList";
 	}
 	
 	@ResponseBody

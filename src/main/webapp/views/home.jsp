@@ -12,11 +12,15 @@
 	max-height: 400px;
 	max-width: 600px;
 }
+
+
 </style>
 </head>
 <body>
 	<!-- 整个页面容器 -->
 	<div class="container">
+<%--返回顶部按钮--%>
+<a href="#" class="layui-icon layui-icon-top backTop"></a>
 		<!-- 顶部 -->
 		<%@ include file="/inc/header.jsp.inc" %>
 		<!-- 轮播图部分 -->

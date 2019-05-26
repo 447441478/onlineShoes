@@ -97,7 +97,7 @@ a:hover{
 		<div class="top_bar_title">用户登录</div>
 	</div>
 	<div class="container-fluid" id="login">
-		<form action="" autocomplete="off">
+		<form action="" autocomplete="off" class="layui-form">
 			<div class="row" style="height: 36px;line-height: 36px; margin-top: 48px;">
 				<div class="col-xs-5 col-xs-offset-3">
 					<div class="input-group">
@@ -155,15 +155,12 @@ a:hover{
 					</span>
 				</div>
 			</div>
-			<div class="row" style="margin-top: 6px;">
+			<div class="row" style="height: 20px;line-height: 20px;margin-top: 20px;margin-bottom: 16px;">
 				<div class="col-xs-5 col-xs-offset-3">
-					 <div class="checkbox">
-				        <label>
-				          <input type="checkbox" v-model="autoLogin">两周内自动登录
-				        </label>
-				        <a class="forgetPwd" href="forgetPwd">忘记密码？</a>
-				      </div>
-				      
+					<div class="layui-form">
+						<input id="autoLogin" type="checkbox" lay-skin="primary" title="两周内自动登录" />
+						<a class="forgetPwd" href="forgetPwd">忘记密码？</a>
+					</div>
 				</div>
 			</div>
 			<div class="row" style="height: 40px;line-height: 40px;margin-top: 8px;">
@@ -180,6 +177,9 @@ a:hover{
 	</div>
 </body>
 <script type="text/javascript">
+layui.use('form', function(){
+	var form = layui.form;
+});
 var login = new Vue({
 	el:"#login",
 	data:function(){
@@ -192,7 +192,6 @@ var login = new Vue({
 			msg_3:0,
 			checkCodeUrl:"checkCode",
 			errorLoginNum:${errorLoginNum == null ? 0 : errorLoginNum},
-			autoLogin:false,
 		};
 	},
 	methods:{
@@ -238,12 +237,12 @@ var login = new Vue({
 						username:that.username,
 						password:md5(that.password),
 						checkCode:that.checkCode,
-						autoLogin:that.autoLogin,
+						autoLogin: $("#autoLogin").prop("checked"),
 					},
 					type:"POST",
 					success:function(msg){
 						if(msg.code == <%=Msg.Code.SUCCESS%>){
-							if(that.autoLogin){
+							if($("#autoLogin").prop("checked")){
 								$.cookie("username",that.username,{expires:14,path:"/"});
 								$.cookie("password",md5(that.password),{expires:14,path:"/"});
 							}

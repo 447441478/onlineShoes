@@ -185,7 +185,7 @@ label {
 								<td style="vertical-align: middle;border-left: 1px solid rgb(221,221,221);">￥{{Number(item.price).toFixed(2)}} x {{item.amount}}</td>
 								<td style="border-left: 1px solid rgb(221,221,221);">
 									<div>
-										<i class="iconfont">&#xe753;</i>{{item.name}}
+										<i class="iconfont">&#xe753;</i>&ensp;{{item.name}}
 									</div>
 									<div>
 										<span class="glyphicon glyphicon-phone">{{item.tel}}</span>

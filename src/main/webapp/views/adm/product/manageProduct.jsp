@@ -130,7 +130,7 @@ font-weight: normal;
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK_OUT %>' && !isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-up"></i>
 								<i v-if="orderColum == '<%=SearchField.ShoesDef.STOCK_OUT %>' && isDesc" style="margin-left: 10px;" class="glyphicon glyphicon-chevron-down"></i>
 							</th>
-							<th>操作</th>
+							<th style="width: 80px;cursor: pointer;">操作</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -155,13 +155,13 @@ font-weight: normal;
 			</div>
 <!-- 模式对话框 -->
 <div class="modal fade" id="myModal" style="overflow:hidden;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="dialog" style="width: 900px;height: 450px;">
+	<div class="modal-dialog" role="dialog" style="width: 900px;height: 550px;">
 		<div class="modal-content">
 			<span style="position: relative;right: 25px;top: 25px;z-index: 100;" type="button" class="close" data-dismiss="modal" aria-hidden="true">
 				&times;
 			</span>
-			<div class="modal-body" style="width: 900px;height: 450px;padding: 0px;">
-				<iframe src="" style="width: 100%;height: 100%;position: fixed;" frameborder=0 scrolling="yes"></iframe>
+			<div class="modal-body" style="padding: 0px;">
+				<iframe src="" style="width: 100%;height: 100%;position: fixed;border-radius: 10px;" frameborder=0 scrolling="yes"></iframe>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal -->

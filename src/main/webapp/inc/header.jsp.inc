@@ -28,6 +28,9 @@
 		<a href="javascript:;" class="layui-icon layui-icon-username"> ${user.username}</a>
 		<dl class="layui-nav-child second" >
 			<dd><a href="javascript:;" onclick="memberCenter()" class="layui-icon layui-icon-rate"> 会员中心</a></dd>
+<c:if test="${user.manager}">
+			<dd><a href="javascript:;" onclick="goAdm()" class="layui-icon layui-icon-app"> 管理系统</a></dd>
+</c:if>
 			<dd><a href="javascript:;" onclick="logout()" style="color: #00a1ff;">[退出]</a></dd>
 		</dl>
 	</li>
@@ -50,7 +53,7 @@
 </div>
 <!-- 模式对话框 -->
 <div class="modal fade" id="myModal" style="overflow:hidden;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="dialog" style="width: 600px;height: 500px;">
+	<div class="modal-dialog" role="dialog" style="width: 600px;height: 500px;top: 50%;margin-top: -250px;">
 		<div class="modal-content">
 			<button style="position: relative;right: 20px;top: 20px;z-index: 100;" type="button" class="close" data-dismiss="modal" aria-hidden="true">
 				&times;
@@ -81,6 +84,10 @@ function addFavorite() {
 		}
 	}
 }
+
+	function goAdm() {
+		window.location.href = "${APP_DIR}/adm";
+	}
 
 	function myOrder(){
 		var url = "${APP_DIR}/order";

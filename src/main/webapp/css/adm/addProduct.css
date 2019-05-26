@@ -6,32 +6,35 @@
 	padding-bottom: 10px;
 }
 .product .item{
-    width: 100%;
-    margin: 3px 0;
-    padding: 0;
-    height: 24px;
-    line-height: 24px;
-    clear: both;
-    font-size: 12px;
+	width: 100%;
+	margin: 3px 0;
+	padding: 0;
+	height: 24px;
+	line-height: 24px;
+	clear: both;
+	font-size: 12px;
 }
 .product .item .leftItem{
-    width: 30%;
-    height:24px;
-    float: left;
-    text-align: right;
-    margin-right: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	width: 30%;
+	height:24px;
+	float: left;
+	text-align: right;
+	margin-right: 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .product .item .rightItem{
-    width: 67%;
-    float: left;
-    text-align: left;
+	width: 67%;
+	float: left;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .product .item .rightItem:before{
 	content: "：";
-    float: left;
+	float: left;
 }
 .product .item .rightItem input,select{
 	height: 23px;
@@ -49,8 +52,8 @@
 	cursor: pointer;
 }
 .fc-g {
-    color: rgb(153, 153, 153);
-    margin-left: 6px;
+	color: rgb(153, 153, 153);
+	margin-left: 6px;
 }
 .sizeAndAmount{
 	width: 50%;
@@ -67,7 +70,7 @@
 }
 .sizeAndAmount table td{
 	text-align: center;
-	margin-top: 8px; 
+	padding-top: 8px;
 }
 .sizeAndAmount table td input{
 	height: 23px;
@@ -93,11 +96,11 @@
 	line-height:23px;
 	text-align:center;
 	color: #fff;
-    background-color: #d9534f;
-    border-color: #d43f3a;
-    border-radius: 5px;
-    box-sizing:border-box;
-    cursor: pointer;
+	background-color: #d9534f;
+	border-color: #d43f3a;
+	border-radius: 5px;
+	box-sizing:border-box;
+	cursor: pointer;
 }
 .sizeAndAmount .addBtn{
 	margin-top:8px;

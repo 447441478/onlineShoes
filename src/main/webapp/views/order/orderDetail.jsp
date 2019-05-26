@@ -69,6 +69,7 @@
 <body style="background-color: #f5f5f5;background-image: none;">
 	<!-- 整个页面容器 -->
 	<div class="container">
+<a href="#" class="layui-icon layui-icon-top backTop"></a>
 		<!-- 顶部 -->
 		<%@ include file="/inc/header.jsp.inc" %>
 		<div class="row">

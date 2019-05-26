@@ -86,7 +86,7 @@
                                         <td>onlineShoes.hncu.net</td></tr>
                                     <tr>
                                         <th>操作系统</th>
-                                        <td>Windows8</td></tr>
+                                        <td>Windows10</td></tr>
                                     <tr>
                                         <th>运行环境</th>
                                         <td>Tomcat7.0</td></tr>
@@ -94,7 +94,7 @@
                                         <th>JAVA版本</th>
                                         <td>1.7</td></tr>
                                         <th>MYSQL版本</th>
-                                        <td>5.7</td></tr>
+                                        <td>5.6</td></tr>
                                 </tbody>
                             </table>
                         </div>

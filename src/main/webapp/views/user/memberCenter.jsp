@@ -1,4 +1,5 @@
 <%@page import="net.hncu.onlineShoes.util.Msg"%>
+<%@ page import="net.hncu.onlineShoes.domain.User" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -125,7 +126,7 @@
 				<div class="line">
 					<span class="leftSpan">会员：</span>
 					<span class="rightSpan">
-						<input value="普通会员" disabled="disabled"/>
+						<input :value="flag == <%=User.Flag.FREE%> ? '普通会员' : '超级会员'" disabled="disabled"/>
 					</span>
 				</div>
 				<div class="line">
@@ -213,6 +214,7 @@ var v_memberCenter = new Vue({
 			menus: menus,
 			showPwd: false,
 			email:'${user.email}',
+			flag: ${user.flag},
 			oldPwd:'',
 			newPwd:'',
 			newPwd2:'',

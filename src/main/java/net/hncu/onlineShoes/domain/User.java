@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import net.hncu.onlineShoes.util.BitUtil;
 import net.hncu.onlineShoes.util.DateUtil;
 
 public class User implements Serializable{
@@ -19,6 +20,21 @@ public class User implements Serializable{
 		public static final int ORDER_MANAGER = 0x8;   //订单管理员权限
 		public static final int SUPER_MANAGER = 0x10;  //超级管理员权限
 		public static final int FREEZE = 0x20;         //冻结用户
+
+        public static boolean isManager(Integer flag){
+            if(BitUtil.hasBit(flag ,FREEZE)){
+                return false;
+            }
+            if(BitUtil.hasBit(flag ,PRODUCT_MANAGER))
+                return true;
+            if(BitUtil.hasBit(flag ,MEMBER_MANAGER))
+                return true;
+            if(BitUtil.hasBit(flag ,ORDER_MANAGER))
+                return true;
+            if(BitUtil.hasBit(flag ,SUPER_MANAGER))
+                return true;
+            return false;
+        }
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -36,6 +52,10 @@ public class User implements Serializable{
     private Date createTime;
 
     private Integer flag;
+
+    public boolean isManager(){
+        return Flag.isManager(flag);
+    }
     
     //购物车
     private List<ShoesItem> shoppingCar = new ArrayList<ShoesItem>();

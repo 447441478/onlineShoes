@@ -256,7 +256,17 @@ var v_homeSetting = new Vue({
 			$("#startTime").val(new Date(data.startTime).Format("yyyy-MM-dd"));
 			$("#endTime").val(new Date(data.endTime).Format("yyyy-MM-dd"));
 		},
-	}
+	},
+	watch: {
+		'pageInfo.currentPage': function (val) {
+			this.refresh();
+		},
+		'pageInfo.total': function (val) {
+			if (val != 0 && val < this.pageInfo.currentPage * this.pageInfo.pageSize) {
+				this.pageInfo.currentPage = parseInt((val + this.pageInfo.pageSize - 1) / this.pageInfo.pageSize);
+			}
+		},
+	},
 });
 $(function(){
 	layui.use(['laydate', 'form'],function() {

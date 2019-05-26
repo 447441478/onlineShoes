@@ -36,5 +36,32 @@
 input,button,a {
     outline:0 none !important; blr:expression(this.onFocus=this.blur());
 }
-
+.modal-open{
+	overflow-y: auto;
+	padding-left: 16px;
+}
+.backTop{
+	position: fixed;
+	bottom: 16px;
+	right: 16px;
+	font-size: 40px;
+	text-decoration: none;
+	color: #fff;
+	background: #999;
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+	opacity: .5;
+	border-radius: 4px;
+}
+.backTop:hover{
+	opacity: 1;
+	text-decoration: none;
+	color: #fff;
+}
+.backTop:focus{
+	text-decoration: none;
+	color: #fff;
+}
 </style>

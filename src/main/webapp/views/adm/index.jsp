@@ -39,7 +39,7 @@
                     <a href="javascript:;">${user.username}</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a onclick="xadmin.open('切换帐号','${APP_DIR}/user/login');$.cookie('prePath','${APP_DIR}/adm',{path:'/'});">切换帐号</a>
+                            <a onclick="xadmin.open('切换帐号','${APP_DIR}/user/login',600,600);$.cookie('prePath','${APP_DIR}/adm',{path:'/'});">切换帐号</a>
                         </dd>
                         <dd>
                             <a href="javascript:;" onclick="logout()">退出</a>
